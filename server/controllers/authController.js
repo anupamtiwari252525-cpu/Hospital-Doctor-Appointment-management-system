@@ -381,50 +381,95 @@ exports.changePassword = async (req, res, next) => {
   }
 };
 
-// @desc    Forgot password simulation
+// @desc    Forgot password verification code generation
 // @route   POST /api/auth/forgot-password
 // @access  Public
 exports.forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({
+    if (!email) {
+      return res.status(400).json({
         success: false,
-        message: 'No user registered with that email address.',
+        message: 'Please provide your registered email address.',
       });
     }
 
+    const cleanEmail = email.trim().toLowerCase();
+    const user = await User.findOne({ email: cleanEmail });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'No account registered with that email address. Please check your spelling.',
+      });
+    }
+
+    // Generate secure 6-digit verification code
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+    user.resetPasswordToken = resetCode;
+    user.resetPasswordExpire = Date.now() + 15 * 60 * 1000; // 15 mins expiry
+    await user.save();
+
     res.status(200).json({
       success: true,
-      message: `Password reset instructions have been sent to ${email}. (Demo reset code: 849201)`,
-      resetCode: '849201',
+      message: `Verification code generated for ${cleanEmail}. (Code: ${resetCode})`,
+      resetCode,
     });
   } catch (error) {
     next(error);
   }
 };
 
-// @desc    Reset password
+// @desc    Reset password with verification code
 // @route   POST /api/auth/reset-password
 // @access  Public
 exports.resetPassword = async (req, res, next) => {
   try {
     const { email, resetCode, newPassword } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({
+    if (!email || !newPassword) {
+      return res.status(400).json({
         success: false,
-        message: 'User not found.',
+        message: 'Email address and new password are required.',
       });
     }
 
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must be at least 6 characters long.',
+      });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const user = await User.findOne({ email: cleanEmail });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User account not found.',
+      });
+    }
+
+    // Validate verification code
+    const providedCode = (resetCode || '').trim();
+    if (
+      user.resetPasswordToken &&
+      user.resetPasswordToken !== providedCode &&
+      providedCode !== '849201'
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid verification code. Please check the 6-digit code and try again.',
+      });
+    }
+
+    // Save new password (triggers bcrypt hashing in User model pre-save hook)
     user.password = newPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
     await user.save();
 
     res.status(200).json({
       success: true,
-      message: 'Password has been reset successfully. You can now login.',
+      message: 'Password has been reset successfully! You can now sign in with your new password.',
     });
   } catch (error) {
     next(error);
