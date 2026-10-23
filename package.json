@@ -1,0 +1,29 @@
+{
+  "name": "care-connect-doctor-hospital-appointment",
+  "version": "1.0.0",
+  "description": "CARE CONNECT - Hospital Doctor Appointment Management System for Delhi, Modinagar, Ghaziabad, and Meerut",
+  "scripts": {
+    "server": "cd server && npm run dev",
+    "client": "cd client && npm run dev",
+    "seed": "cd server && npm run seed",
+    "install:all": "cd server && npm install && cd ../client && npm install",
+    "dev": "node -e \"const { spawn } = require('child_process'); spawn('npm', ['run', 'server'], { stdio: 'inherit', shell: true }); spawn('npm', ['run', 'client'], { stdio: 'inherit', shell: true });\""
+  },
+  "keywords": [
+    "care-connect",
+    "mern",
+    "hospital-management",
+    "doctor-appointment",
+    "pincode-search",
+    "delhi",
+    "modinagar",
+    "ghaziabad",
+    "meerut",
+    "mongodb",
+    "express",
+    "react",
+    "nodejs"
+  ],
+  "author": "CARE CONNECT Engineering",
+  "license": "ISC"
+}
