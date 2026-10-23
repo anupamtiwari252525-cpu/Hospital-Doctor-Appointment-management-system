@@ -1,21 +1,18 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+// Contexts
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
-import Navbar from './components/common/Navbar';
-import Footer from './components/common/Footer';
 
-// Pages
-import HomePage from './pages/public/HomePage';
-import SearchPage from './pages/public/SearchPage';
-import HospitalsPage from './pages/public/HospitalsPage';
-import AboutPage from './pages/public/AboutPage';
-import LoginPage from './pages/auth/LoginPage';
-import RegisterPage from './pages/auth/RegisterPage';
-import AdminLoginPage from './pages/auth/AdminLoginPage';
-import PatientDashboard from './pages/patient/PatientDashboard';
-import DoctorDashboard from './pages/doctor/DoctorDashboard';
-import AdminDashboard from './pages/admin/AdminDashboard';
+// Common Layout
+import { Navbar, Footer } from './components/common';
+
+// Modular Pages
+import { HomePage, SearchPage, HospitalsPage, AboutPage } from './pages/public';
+import { LoginPage, RegisterPage, AdminLoginPage } from './pages/auth';
+import { PatientDashboard } from './pages/patient';
+import { DoctorDashboard } from './pages/doctor';
+import { AdminDashboard } from './pages/admin';
 
 // Route Guards
 function ProtectedRoute({ children, allowedRoles }) {
