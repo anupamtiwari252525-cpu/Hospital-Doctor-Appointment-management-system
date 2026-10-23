@@ -81,10 +81,8 @@ export default function LoginPage() {
     try {
       const res = await authAPI.forgotPassword({ email: forgotEmail.trim().toLowerCase() });
       if (res.success) {
-        setForgotSuccess(res.message || 'Verification code sent to your registered email!');
-        if (res.resetCode) {
-          setResetCode(res.resetCode);
-        }
+        setForgotSuccess(res.message || 'A 6-digit verification code has been sent to your email. Please check your inbox.');
+        setResetCode(''); // Code is sent to email only, never displayed or pre-filled on screen
         setForgotStep(2);
       }
     } catch (err) {
@@ -616,12 +614,13 @@ export default function LoginPage() {
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="e.g. 849201"
+                        placeholder="Enter 6-digit code from email"
                         maxLength="6"
                         value={resetCode}
-                        onChange={(e) => setResetCode(e.target.value)}
+                        onChange={(e) => setResetCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                         required
-                        style={{ paddingLeft: '38px', letterSpacing: '2px', fontWeight: 700 }}
+                        autoFocus
+                        style={{ paddingLeft: '38px', letterSpacing: '4px', fontWeight: 700, fontSize: '1rem' }}
                       />
                       <Shield
                         size={16}
@@ -634,6 +633,9 @@ export default function LoginPage() {
                         }}
                       />
                     </div>
+                    <span style={{ fontSize: '0.74rem', color: 'var(--slate-500)', marginTop: '4px', display: 'block' }}>
+                      Check your email inbox (and spam folder) for the 6-digit verification code.
+                    </span>
                   </div>
 
                   {/* New Password Input */}

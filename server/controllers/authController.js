@@ -381,7 +381,9 @@ exports.changePassword = async (req, res, next) => {
   }
 };
 
-// @desc    Forgot password verification code generation
+const { sendPasswordResetEmail } = require('../utils/emailService');
+
+// @desc    Forgot password verification code generation & email dispatch
 // @route   POST /api/auth/forgot-password
 // @access  Public
 exports.forgotPassword = async (req, res, next) => {
@@ -409,10 +411,13 @@ exports.forgotPassword = async (req, res, next) => {
     user.resetPasswordExpire = Date.now() + 15 * 60 * 1000; // 15 mins expiry
     await user.save();
 
+    // Send code to user's registered email address
+    await sendPasswordResetEmail(cleanEmail, resetCode, user.name);
+
+    // Return response without exposing the verification code on the client
     res.status(200).json({
       success: true,
-      message: `Verification code generated for ${cleanEmail}. (Code: ${resetCode})`,
-      resetCode,
+      message: `A 6-digit verification code has been sent to ${cleanEmail}. Please check your email inbox and enter the code below.`,
     });
   } catch (error) {
     next(error);
