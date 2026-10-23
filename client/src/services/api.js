@@ -7,22 +7,43 @@ const api = axios.create({
   },
 });
 
-// Intercept requests to add JWT token from localStorage
+// Intercept requests to add validated JWT token from localStorage
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('medi_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (token && token !== 'null' && token !== 'undefined' && token.trim() !== '') {
+      config.headers.Authorization = `Bearer ${token.trim()}`;
     }
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// Intercept responses for auth errors
+// Intercept responses for auth errors and token invalidation
 api.interceptors.response.use(
   (response) => response.data,
   (error) => {
+    const status = error.response?.status;
+    const url = error.config?.url || '';
+
+    // If 401 occurs on protected routes (not during login/register/password recovery)
+    const isPublicAuthEndpoint =
+      url.includes('/auth/login') ||
+      url.includes('/auth/register') ||
+      url.includes('/auth/forgot-password') ||
+      url.includes('/auth/reset-password');
+
+    if (status === 401 && !isPublicAuthEndpoint) {
+      localStorage.removeItem('medi_token');
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(
+          new CustomEvent('auth:expired', {
+            detail: { message: error.response?.data?.message || 'Session expired. Please log in again.' },
+          })
+        );
+      }
+    }
+
     const message =
       error.response?.data?.message || error.message || 'Something went wrong with the server';
     return Promise.reject(new Error(message));

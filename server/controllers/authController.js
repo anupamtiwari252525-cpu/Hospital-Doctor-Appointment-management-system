@@ -445,7 +445,7 @@ exports.resetPassword = async (req, res, next) => {
     }
 
     const cleanEmail = email.trim().toLowerCase();
-    const user = await User.findOne({ email: cleanEmail });
+    const user = await User.findOne({ email: cleanEmail }).select('+resetPasswordToken +resetPasswordExpire');
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -455,14 +455,17 @@ exports.resetPassword = async (req, res, next) => {
 
     // Validate verification code
     const providedCode = (resetCode || '').trim();
-    if (
-      user.resetPasswordToken &&
-      user.resetPasswordToken !== providedCode &&
-      providedCode !== '849201'
-    ) {
+    if (!user.resetPasswordToken || user.resetPasswordToken !== providedCode) {
       return res.status(400).json({
         success: false,
         message: 'Invalid verification code. Please check the 6-digit code and try again.',
+      });
+    }
+
+    if (user.resetPasswordExpire && user.resetPasswordExpire < Date.now()) {
+      return res.status(400).json({
+        success: false,
+        message: 'The verification code has expired (valid for 15 minutes). Please request a new code.',
       });
     }
 

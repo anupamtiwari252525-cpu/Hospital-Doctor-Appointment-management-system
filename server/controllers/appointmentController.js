@@ -210,6 +210,19 @@ exports.getAppointmentById = async (req, res, next) => {
       });
     }
 
+    // Strict JWT ownership authorization check
+    const isPatient = appointment.patientId && appointment.patientId._id.toString() === req.user.id.toString();
+    const isDoctor = appointment.doctorId?.userId?._id?.toString() === req.user.id.toString();
+    const isAdmin = req.user.role === 'admin';
+
+    if (!isPatient && !isDoctor && !isAdmin) {
+      return res.status(403).json({
+        success: false,
+        code: 'FORBIDDEN_RESOURCE',
+        message: 'Access denied: You are not authorized to view this appointment record.',
+      });
+    }
+
     res.status(200).json({
       success: true,
       data: appointment,
@@ -235,6 +248,17 @@ exports.confirmAppointment = async (req, res, next) => {
       return res.status(404).json({
         success: false,
         message: 'Appointment not found',
+      });
+    }
+
+    // Ensure only the assigned doctor or admin can confirm
+    const isAssignedDoctor = appointment.doctorId?.userId?._id?.toString() === req.user.id.toString();
+    const isAdmin = req.user.role === 'admin';
+
+    if (!isAssignedDoctor && !isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied: You can only confirm appointments assigned to your doctor profile.',
       });
     }
 
@@ -280,6 +304,18 @@ exports.cancelAppointment = async (req, res, next) => {
       return res.status(404).json({
         success: false,
         message: 'Appointment not found',
+      });
+    }
+
+    // Ownership check: patient, doctor, or admin
+    const isPatient = appointment.patientId && appointment.patientId._id.toString() === req.user.id.toString();
+    const isDoctor = appointment.doctorId?.userId?._id?.toString() === req.user.id.toString();
+    const isAdmin = req.user.role === 'admin';
+
+    if (!isPatient && !isDoctor && !isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied: You are not authorized to cancel this appointment.',
       });
     }
 
@@ -360,6 +396,18 @@ exports.rescheduleAppointment = async (req, res, next) => {
       });
     }
 
+    // Ownership check: patient, doctor, or admin
+    const isPatient = appointment.patientId && appointment.patientId._id.toString() === req.user.id.toString();
+    const isDoctor = appointment.doctorId?.userId?._id?.toString() === req.user.id.toString();
+    const isAdmin = req.user.role === 'admin';
+
+    if (!isPatient && !isDoctor && !isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied: You are not authorized to reschedule this appointment.',
+      });
+    }
+
     // Check if new slot is free
     const conflict = await Appointment.findOne({
       doctorId: appointment.doctorId._id,
@@ -430,11 +478,21 @@ exports.rescheduleAppointment = async (req, res, next) => {
 // @access  Private (Doctor or Admin)
 exports.completeAppointment = async (req, res, next) => {
   try {
-    const appointment = await Appointment.findById(req.params.id);
+    const appointment = await Appointment.findById(req.params.id).populate('doctorId');
     if (!appointment) {
       return res.status(404).json({
         success: false,
         message: 'Appointment not found',
+      });
+    }
+
+    const isAssignedDoctor = appointment.doctorId?.userId?.toString() === req.user.id.toString();
+    const isAdmin = req.user.role === 'admin';
+
+    if (!isAssignedDoctor && !isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied: You can only complete your own appointments.',
       });
     }
 

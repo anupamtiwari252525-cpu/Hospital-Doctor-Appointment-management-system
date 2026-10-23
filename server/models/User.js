@@ -77,8 +77,14 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    resetPasswordToken: String,
-    resetPasswordExpire: Date,
+    resetPasswordToken: {
+      type: String,
+      select: false,
+    },
+    resetPasswordExpire: {
+      type: Date,
+      select: false,
+    },
   },
   {
     timestamps: true,
@@ -102,7 +108,7 @@ userSchema.methods.comparePassword = async function (enteredPassword) {
 
 // Generate JWT Token
 userSchema.methods.generateAuthToken = function () {
-  const secret = process.env.JWT_SECRET || 'hospital_appointment_secret_jwt_key_2026';
+  const secret = process.env.JWT_SECRET || 'hospital_appointment_secret_jwt_key_2026_super_secure';
   return jwt.sign(
     {
       id: this._id,

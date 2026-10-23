@@ -127,6 +127,19 @@ exports.getPrescriptionByAppointment = async (req, res, next) => {
       });
     }
 
+    // Strict JWT ownership authorization check
+    const isPatient = prescription.patientId && prescription.patientId._id.toString() === req.user.id.toString();
+    const isDoctor = prescription.doctorId?.userId?._id?.toString() === req.user.id.toString();
+    const isAdmin = req.user.role === 'admin';
+
+    if (!isPatient && !isDoctor && !isAdmin) {
+      return res.status(403).json({
+        success: false,
+        code: 'FORBIDDEN_RESOURCE',
+        message: 'Access denied: You are not authorized to view this medical prescription.',
+      });
+    }
+
     res.status(200).json({
       success: true,
       data: prescription,
@@ -141,8 +154,13 @@ exports.getPrescriptionByAppointment = async (req, res, next) => {
 // @access  Private
 exports.getPatientPrescriptions = async (req, res, next) => {
   try {
-    const patientId = req.params.patientId || req.user.id;
-    const prescriptions = await Prescription.find({ patientId })
+    // If patient, STRICTLY enforce their own user ID from token to protect health data
+    let targetPatientId = req.user.id;
+    if (req.user.role === 'admin' || req.user.role === 'doctor') {
+      targetPatientId = req.params.patientId || req.user.id;
+    }
+
+    const prescriptions = await Prescription.find({ patientId: targetPatientId })
       .populate('patientId', 'name email phone')
       .populate({
         path: 'doctorId',

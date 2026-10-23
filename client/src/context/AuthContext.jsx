@@ -27,6 +27,16 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
   }, [token]);
 
+  // Global listener for token expiration / invalidation triggered by API interceptor
+  useEffect(() => {
+    const handleAuthExpired = () => {
+      logout();
+    };
+
+    window.addEventListener('auth:expired', handleAuthExpired);
+    return () => window.removeEventListener('auth:expired', handleAuthExpired);
+  }, []);
+
   const login = async (email, password) => {
     const res = await authAPI.login({ email, password });
     if (res.success) {

@@ -8,51 +8,84 @@ const protect = async (req, res, next) => {
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer ')
   ) {
-    token = req.headers.authorization.split(' ')[1];
+    const rawToken = req.headers.authorization.split(' ')[1];
+    if (rawToken && rawToken !== 'null' && rawToken !== 'undefined' && rawToken.trim() !== '') {
+      token = rawToken.trim();
+    }
   }
 
   if (!token) {
     return res.status(401).json({
       success: false,
-      message: 'Not authorized to access this route. Please login.',
+      code: 'AUTH_TOKEN_REQUIRED',
+      message: 'Access denied: Authentication token required to access this resource.',
     });
   }
 
   try {
-    const secret = process.env.JWT_SECRET || 'hospital_appointment_secret_jwt_key_2026';
+    const secret = process.env.JWT_SECRET || 'hospital_appointment_secret_jwt_key_2026_super_secure';
     const decoded = jwt.verify(token, secret);
-    const user = await User.findById(decoded.id);
+
+    if (!decoded || !decoded.id) {
+      return res.status(401).json({
+        success: false,
+        code: 'AUTH_TOKEN_INVALID',
+        message: 'Invalid authentication token payload.',
+      });
+    }
+
+    const user = await User.findById(decoded.id).select('-password');
 
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'The user belonging to this token no longer exists.',
+        code: 'USER_NOT_FOUND',
+        message: 'The user account associated with this token no longer exists.',
       });
     }
 
     if (user.isBlocked) {
       return res.status(403).json({
         success: false,
-        message: 'Your account has been deactivated or blocked by admin.',
+        code: 'ACCOUNT_BLOCKED',
+        message: 'Your account has been deactivated or restricted by an administrator.',
       });
     }
 
     req.user = user;
     next();
   } catch (err) {
+    if (err.name === 'TokenExpiredError') {
+      return res.status(401).json({
+        success: false,
+        code: 'TOKEN_EXPIRED',
+        message: 'Your authentication session has expired. Please sign in again.',
+      });
+    }
+
     return res.status(401).json({
       success: false,
-      message: 'Token is invalid or has expired. Please login again.',
+      code: 'TOKEN_INVALID',
+      message: 'Authentication token is invalid or has been tampered with. Access denied.',
     });
   }
 };
 
 const authorize = (...roles) => {
   return (req, res, next) => {
-    if (!req.user || !roles.includes(req.user.role)) {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        code: 'AUTH_REQUIRED',
+        message: 'Authentication required before verifying access privileges.',
+      });
+    }
+
+    if (!roles.includes(req.user.role)) {
       return res.status(403).json({
         success: false,
-        message: `User role '${req.user ? req.user.role : 'guest'}' is not authorized to access this resource.`,
+        code: 'FORBIDDEN_ROLE',
+        message: `Forbidden: Role '${req.user.role}' is not authorized to access this resource.`,
       });
     }
     next();
