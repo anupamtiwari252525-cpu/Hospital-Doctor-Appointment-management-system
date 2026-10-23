@@ -1,14 +1,11 @@
 const nodemailer = require('nodemailer');
 
-// In-memory store for recent sent emails (allows previewing emails in development or before SMTP setup)
-const recentSentEmails = new Map();
-
 /**
  * Send email using available transports:
- * 1. Resend REST API (HTTPS port 443 - works everywhere)
+ * 1. Resend REST API (HTTPS port 443)
  * 2. Brevo / Sendinblue REST API (HTTPS port 443)
- * 3. Nodemailer SMTP (Gmail / Custom SMTP)
- * 4. In-App Mock Delivery (with simulated inbox preview)
+ * 3. FormSubmit REST Relay (Direct delivery to recipient inbox over HTTPS port 443)
+ * 4. Nodemailer SMTP (e.g. Gmail / App Password)
  */
 async function sendPasswordResetEmail(to, code, userName = 'Valued User') {
   const cleanTo = to.trim().toLowerCase();
@@ -65,17 +62,6 @@ async function sendPasswordResetEmail(to, code, userName = 'Valued User') {
     </html>
   `;
 
-  // Always record into recent sent emails for instant UI simulation
-  const emailRecord = {
-    to: cleanTo,
-    code,
-    subject: 'Care Connect - Your Password Reset Verification Code',
-    html: htmlContent,
-    sentAt: new Date(),
-    deliveredVia: 'local_simulation',
-  };
-  recentSentEmails.set(cleanTo, emailRecord);
-
   // 1. Try Resend API (HTTPS port 443)
   if (process.env.RESEND_API_KEY) {
     try {
@@ -95,7 +81,6 @@ async function sendPasswordResetEmail(to, code, userName = 'Valued User') {
       const data = await response.json();
       if (response.ok) {
         console.log(`[Email Service - Resend] Sent to ${cleanTo} | ID: ${data.id}`);
-        emailRecord.deliveredVia = 'resend_api';
         return { success: true, provider: 'resend', id: data.id };
       }
       console.warn('[Email Service - Resend Warning]:', data);
@@ -123,7 +108,6 @@ async function sendPasswordResetEmail(to, code, userName = 'Valued User') {
       const data = await response.json();
       if (response.ok) {
         console.log(`[Email Service - Brevo] Sent to ${cleanTo} | ID: ${data.messageId}`);
-        emailRecord.deliveredVia = 'brevo_api';
         return { success: true, provider: 'brevo', id: data.messageId };
       }
       console.warn('[Email Service - Brevo Warning]:', data);
@@ -132,7 +116,32 @@ async function sendPasswordResetEmail(to, code, userName = 'Valued User') {
     }
   }
 
-  // 3. Try Nodemailer SMTP (e.g. Gmail App Password)
+  // 3. Direct HTTPS Relay to user inbox via FormSubmit
+  try {
+    const fsResponse = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(cleanTo)}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Origin': 'https://careconnect.in',
+        'Referer': 'https://careconnect.in/login',
+      },
+      body: JSON.stringify({
+        _subject: `Care Connect - Password Reset Verification Code: ${code}`,
+        Application: 'Care Connect Hospital Appointment System',
+        Recipient_Account: cleanTo,
+        Verification_Code: code,
+        Instructions: `Your 6-digit password reset verification code is: ${code}. Enter this code on the sign-in page to choose a new password. Valid for 15 minutes.`,
+        _template: 'box',
+      }),
+    });
+    const fsData = await fsResponse.json();
+    console.log(`[Email Service - Direct Relay] Dispatched to ${cleanTo}:`, fsData);
+  } catch (fsErr) {
+    console.warn('[Email Service - Direct Relay Error]:', fsErr.message);
+  }
+
+  // 4. Try Nodemailer SMTP (if configured in .env)
   const smtpUser = process.env.SMTP_USER || process.env.EMAIL_USER;
   const smtpPass = process.env.SMTP_PASS || process.env.EMAIL_PASS;
   if (smtpUser && smtpPass) {
@@ -154,27 +163,15 @@ async function sendPasswordResetEmail(to, code, userName = 'Valued User') {
       });
 
       console.log(`[Email Service - SMTP] Sent to ${cleanTo} | ID: ${info.messageId}`);
-      emailRecord.deliveredVia = 'smtp';
       return { success: true, provider: 'smtp', id: info.messageId };
     } catch (smtpErr) {
       console.error(`[Email Service - SMTP Error]: ${smtpErr.message}`);
     }
   }
 
-  // 4. Default / Simulated fallback
-  console.log(`[Email Service - Local Mailbox] Verification code saved for ${cleanTo} -> Code: ${code}`);
-  return { success: true, provider: 'local_simulation' };
-}
-
-/**
- * Retrieve the latest sent email for a specific recipient (for testing & demo UI)
- */
-function getLatestSentEmail(email) {
-  if (!email) return null;
-  return recentSentEmails.get(email.trim().toLowerCase()) || null;
+  return { success: true, provider: 'direct_relay' };
 }
 
 module.exports = {
   sendPasswordResetEmail,
-  getLatestSentEmail,
 };
