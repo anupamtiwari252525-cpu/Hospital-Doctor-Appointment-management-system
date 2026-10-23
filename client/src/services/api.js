@@ -37,7 +37,6 @@ export const authAPI = {
   changePassword: (data) => api.put('/auth/change-password', data),
   forgotPassword: (data) => api.post('/auth/forgot-password', data),
   resetPassword: (data) => api.post('/auth/reset-password', data),
-  getEmailPreview: (email) => api.get(`/auth/email-preview?email=${encodeURIComponent(email)}`),
 };
 
 export const searchAPI = {

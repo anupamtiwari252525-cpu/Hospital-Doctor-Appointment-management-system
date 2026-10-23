@@ -381,7 +381,7 @@ exports.changePassword = async (req, res, next) => {
   }
 };
 
-const { sendPasswordResetEmail, getLatestSentEmail } = require('../utils/emailService');
+const { sendPasswordResetEmail } = require('../utils/emailService');
 
 // @desc    Forgot password verification code generation & email dispatch
 // @route   POST /api/auth/forgot-password
@@ -475,32 +475,6 @@ exports.resetPassword = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: 'Password has been reset successfully! You can now sign in with your new password.',
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// @desc    Get simulated email preview for testing & development
-// @route   GET /api/auth/email-preview
-// @access  Public
-exports.getEmailPreview = async (req, res, next) => {
-  try {
-    const { email } = req.query;
-    if (!email) {
-      return res.status(400).json({ success: false, message: 'Email address is required.' });
-    }
-    const cleanEmail = email.trim().toLowerCase();
-    const emailData = getLatestSentEmail(cleanEmail);
-    if (!emailData) {
-      return res.status(404).json({
-        success: false,
-        message: 'No email found in recent dispatch history for this address.',
-      });
-    }
-    res.status(200).json({
-      success: true,
-      email: emailData,
     });
   } catch (error) {
     next(error);
