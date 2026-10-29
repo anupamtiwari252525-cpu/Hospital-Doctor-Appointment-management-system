@@ -329,53 +329,6 @@ export default function AdminLoginPage() {
           {/* VIEW 1: REGULAR ADMIN LOGIN FORM */}
           {!isForgotMode && (
             <form onSubmit={handleLoginSubmit}>
-              {/* Quick Secure Admin Auto-Fill Banner */}
-              <div
-                style={{
-                  background: 'rgba(30, 58, 138, 0.35)',
-                  border: '1px solid rgba(59, 130, 246, 0.4)',
-                  borderRadius: '10px',
-                  padding: '12px 14px',
-                  marginBottom: '18px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: '10px',
-                  flexWrap: 'wrap',
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#93c5fd', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                    <Sparkles size={14} style={{ color: '#60a5fa' }} />
-                    <span>Breach-Proof Admin Credentials</span>
-                  </div>
-                  <div style={{ fontSize: '0.74rem', color: '#cbd5e1', marginTop: '2px' }}>
-                    Email: <code>admin@hospital.com</code> • Password: <code>Admin#MasterAuth2026!</code>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEmail('admin@hospital.com');
-                    setPassword('Admin#MasterAuth2026!');
-                    setError('');
-                  }}
-                  style={{
-                    background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-                    color: '#ffffff',
-                    border: 'none',
-                    borderRadius: '6px',
-                    padding: '6px 12px',
-                    fontSize: '0.76rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 8px rgba(37, 99, 235, 0.4)',
-                  }}
-                >
-                  ⚡ 1-Click Auto-Fill
-                </button>
-              </div>
-
               <div style={{ marginBottom: '16px' }}>
                 <label
                   style={{
@@ -535,7 +488,7 @@ export default function AdminLoginPage() {
                   >
                     <AlertCircle size={15} style={{ color: '#ef4444', flexShrink: 0, marginTop: '2px' }} />
                     <div>
-                      <strong>⚠️ Breached Password Detected:</strong> Google Chrome triggers a security warning on common passwords like <code>{password}</code>. Use <code>Admin#MasterAuth2026!</code> instead (click <strong>⚡ 1-Click Auto-Fill</strong> above) to avoid browser warnings.
+                      <strong>⚠️ Breached Password Detected:</strong> Google Chrome triggers a security warning on common passwords like <code>{password}</code>. Use a high-entropy password like <code>Admin#MasterAuth2026!</code> to avoid browser warnings.
                     </div>
                   </div>
                 )}
