@@ -1,24 +1,55 @@
 # 🏥 CARE CONNECT - Hospital Doctor Appointment Management System
-### **Full MERN Stack Project for Delhi, Modinagar, Ghaziabad, & Meerut with Pincode-Based Proximity Search**
+### **Enterprise MERN Stack Platform with Pincode Proximity Search, JWT RBAC Security & Email OTP Recovery**
 **📞 24/7 Connect Helpline: +91 98765 43210 | ✉️ Email: connect@careconnect.in**
 
-A state-of-the-art, enterprise-grade **Hospital Doctor Appointment Management System** titled **CARE CONNECT**, built with the **MERN Stack** (MongoDB, Express.js, React.js, Node.js). Engineered specifically for the Delhi-NCR and Western Uttar Pradesh medical corridor (**Delhi, Modinagar, Ghaziabad, Meerut**), featuring **Pincode-based Doctor Searching**, verified Indian medical specialists, automated time slot generation, digital consultation & prescription issuance, and administrative telemetry.
+---
+
+## 📖 Overview
+
+**CARE CONNECT** is an enterprise-grade **Hospital Doctor Appointment Management System** built with the **MERN Stack** (MongoDB, Express.js, React 18, Node.js). Designed for the Delhi-NCR and Western Uttar Pradesh medical corridor (**Delhi, Modinagar, Ghaziabad, Meerut**), it delivers an end-to-end digital healthcare experience:
+
+- **Pincode-Driven Proximity Search**: Instant doctor and hospital discovery by exact 6-digit postal code with Haversine distance calculations.
+- **Dynamic OPD Slot Management**: Multi-shift scheduling (Morning/Evening), break configurations, slot duration tuning, instant bookings, and automated cancellation/rescheduling recycling.
+- **Consultation & Digital Rx**: Symptom tracking, clinical diagnosis, interactive medicine schedules, and print-ready digital prescriptions.
+- **Enterprise JWT Security & RBAC**: Strict Bearer token authorization, role-based access control (Patient, Doctor, Admin), and anti-IDOR protections.
+- **Real Email OTP Password Recovery**: Automated 6-digit verification codes sent directly to user email addresses via Nodemailer (Gmail / SMTP / Resend).
+- **Breach-Resistant Password Security**: Client and server-side breach detection against known leaked passwords, preventing browser security pop-ups.
+- **Modular Responsive Architecture**: Seamless experience across **Mobile**, **Tablet**, and **Desktop** screens with a modern glassmorphic medical UI design.
 
 ---
 
-## 🌟 Key System Highlights
+## 🌟 Key Features
 
-- 📍 **Pincode-Based Doctor Discovery**: Search doctors and hospitals by exact 6-digit postal pincode or custom geographic radius (Exact, 10 km, 30 km, 50 km).
-- 📅 **Dynamic Slot Booking Engine**: Auto slot generation based on doctor shift timings (Morning/Evening), break hours, and slot durations.
-- 💊 **Consultation & Digital Prescription**: Doctors record clinical symptoms, diagnosis, medicine schedules (dosage, frequency, duration), and generate print-ready Rx sheets.
-- ⭐ **Strictly Verified Patient Reviews**: Only patients who have completed appointments can submit 1–5 star reviews, automatically recalibrating doctor rating averages.
-- 🔔 **Real-Time In-App Notifications**: Instant alerts for appointment bookings, confirmations, cancellations, rescheduling, and prescription arrivals.
-- 📊 **Executive Admin Dashboard**: Comprehensive statistics (total revenue, patients, doctors, hospitals, appointment trends, and user block/unblock control).
-- 🚀 **Zero-Config MongoDB Server**: Auto-detects local MongoDB (`mongodb://127.0.0.1:27017/hospital_management`) or transparently launches an automated embedded MongoDB engine (`mongodb-memory-server`) with auto-seeding.
+| Feature | Description |
+|---|---|
+| 📍 **Pincode Proximity Engine** | Search by 6-digit Indian postal code (e.g. `110001`, `201204`, `201001`, `250001`) with configurable radius (Exact, 10km, 30km, 50km) and distance badges (e.g. `📍 1.2 km away`). |
+| 📅 **Dynamic Slot Engine** | Shifts (Morning/Evening), break periods, custom durations (15m, 30m, 45m, 60m), real-time booking locks, and slot recycling upon cancellation. |
+| 💊 **Digital Prescription Builder** | Clinicians create structured prescriptions: medicine name, dosage, frequency (`1-0-1 After food`), duration, instructions, and printable Rx sheets. |
+| 🔐 **Enterprise JWT & RBAC** | Strict JWT authentication headers, role-based route guards, and IDOR mitigation preventing horizontal privilege escalation on appointment records. |
+| 📧 **Real Email OTP Reset** | Automated 6-digit verification code delivered directly to the user's email address for secure, verified password resets. |
+| 🛡️ **Breach-Resistant Credentials** | Real-time breach detection against common passwords (e.g. `admin123`) to prevent Google Chrome breach warnings, paired with a 1-click secure password generator. |
+| 📱 **Fully Responsive Layout** | Clean modular CSS and flexible grid layouts tailored for mobile devices, tablets, and high-resolution desktop monitors. |
+| ⭐ **Verified Patient Reviews** | 1–5 star ratings and reviews restricted strictly to verified, completed appointments to preserve review authenticity. |
+| 📊 **Admin Telemetry & Analytics** | Executive dashboard displaying revenue metrics, consultation volumes, doctor verification switches, and user account block/unblock controls. |
+| 🚀 **Dual-Mode MongoDB Engine** | Auto-connects to local MongoDB (`mongodb://127.0.0.1:27017/hospital_management`) or seamlessly starts an embedded in-process database (`mongodb-memory-server`) with auto-seeding. |
 
 ---
 
-## 📐 7 Core Modules Architecture
+## 🔑 Demo Login Accounts
+
+Pre-configured accounts ready for testing across all three system roles:
+
+| Role | Email Address | Password | Description / Notes |
+|---|---|---|---|
+| **System Admin** | `admin@hospital.com` | `Anupam@9642` | Executive Management Console (High-entropy secure password) |
+| **Doctor** | `doctor@hospital.com` | `Doctor#MedPortal2026!` *(or `doctor123`)* | Dr. Rajesh Sharma (Cardiologist, New Delhi) |
+| **Patient** | `patient@hospital.com` | `Patient#CareConnect2026!` *(or `patient123`)* | Rahul Sharma (Patient, Pincode 110001) |
+
+> 💡 **Quick Demo Access**: Instant 1-click sign-in buttons for Patient, Doctor, and Admin are available directly in the top navigation bar during development.
+
+---
+
+## 🏗️ System Architecture & Modular Structure
 
 ```
                                   +-----------------------+
@@ -36,6 +67,7 @@ A state-of-the-art, enterprise-grade **Hospital Doctor Appointment Management Sy
                       |  [Pincode Search]    [Availability & Slots]  |
                       |  [Appointments]      [Digital Prescription]  |
                       |  [Reviews & Alerts]  [Admin Telemetry]       |
+                      |  [Email OTP Service] [Password Security]     |
                       +-----------------------+-----------------------+
                                               |
                                        Mongoose ODM
@@ -50,143 +82,244 @@ A state-of-the-art, enterprise-grade **Hospital Doctor Appointment Management Sy
                       +-----------------------------------------------+
 ```
 
-### **1. Authentication & User Management**
-- Role-based authorization for **Patient**, **Doctor**, and **Admin**.
-- JWT tokens with bcrypt password hashing.
-- Profile management with phone, address, and city/pincode mapping.
-- 1-Click quick demo authentication in top navigation bar for instant testing.
+### **Repository File Organization**
 
-### **2. Hospital & Doctor Management**
-- **Hospital Registry**: Add/edit/deactivate hospitals, departments, facilities (ICU, Cath Lab, 24/7 Trauma), and postal pincodes.
-- **Doctor Registry**: Qualifications (MBBS, MD, DM), medical registration, specialization, consultation fees, and hospital assignments.
-- Admin verification and activation toggles.
-
-### **3. Doctor Search & Discovery (Pincode-Based)**
-- Search by **Doctor Name**, **Specialization**, **Hospital**, and **Pincode**.
-- Haversine distance proximity calculation against target pincode coordinates.
-- Visual badges for **"Direct Pincode Match"** and exact distance in kilometers (e.g. `📍 1.2 km away`).
-- Multi-dimensional sorting: Nearest Pincode, Lowest Fee, Highest Rating, Most Experience.
-
-### **4. Availability & Appointment Management**
-- Working days, shift selection (Morning / Evening / Both), OPD hours, break periods, and custom slot durations (15m, 30m, 45m, 60m).
-- 4-step booking flow: Select Doctor ➔ Pick Date ➔ Select Available Slot ➔ Confirm.
-- Appointment statuses: `pending`, `confirmed`, `rescheduled`, `completed`, `cancelled`.
-- Slot release upon cancellation and reschedule history tracking.
-
-### **5. Consultation & Digital Prescription**
-- Clinicians enter symptoms, clinical diagnosis, and dietary instructions.
-- Dynamic medicine builder: Name, Dosage, Frequency (e.g., `1-0-1 After food`), Duration, and Notes.
-- Printable standard Rx sheet with hospital header, doctor details, and follow-up dates.
-
-### **6. Review & Notification**
-- 1–5 Star ratings with clinical commentary.
-- Enforced constraint: Only completed appointments can be reviewed.
-- Unread notification bell with badge counters for booking status updates.
-
-### **7. Admin Management**
-- Aggregate telemetry: Total Users, Total Doctors, Total Hospitals, Total Appointments, Total Revenue.
-- Month-on-month consultation volume growth charts.
-- User management table with instant Block/Unblock security controls.
-
----
-
-## 🗄️ Database Collections Structure (MongoDB)
-
-| Collection | Schema Highlights |
-|---|---|
-| `users` | `_id`, `name`, `email`, `password`, `phone`, `role` (patient/doctor/admin), `avatar`, `pincode`, `city`, `isBlocked` |
-| `hospitals` | `_id`, `name`, `address`, `city`, `pincode`, `location` (GeoJSON Point), `departments`, `facilities`, `rating` |
-| `doctors` | `_id`, `userId` (ref User), `hospitalId` (ref Hospital), `qualification`, `specialization`, `experience`, `consultationFee`, `rating` |
-| `specializations`| `_id`, `name`, `description`, `icon`, `popularTreatments`, `isActive` |
-| `availabilities` | `_id`, `doctorId`, `date`, `dayOfWeek`, `shift`, `slots: [{ time, isBooked, appointmentId }]` |
-| `appointments` | `_id`, `appointmentNumber`, `patientId`, `doctorId`, `hospitalId`, `date`, `timeSlot`, `fee`, `status`, `paymentStatus` |
-| `prescriptions` | `_id`, `appointmentId`, `patientId`, `doctorId`, `diagnosis`, `medicines: [{ name, dosage, frequency, duration }]` |
-| `reviews` | `_id`, `appointmentId`, `patientId`, `doctorId`, `rating` (1–5), `comment` |
-| `notifications` | `_id`, `userId`, `type`, `title`, `message`, `link`, `isRead` |
-
----
-
-## 🔑 Demo Login Accounts
-
-Pre-populated accounts ready for instant 1-click testing or manual login:
-
-| Role | Email | Password | Details |
-|---|---|---|---|
-| **Admin** | `admin@hospital.com` | `Anupam@9642` | System Administrator Console |
-| **Doctor** | `doctor@hospital.com` | `doctor123` | Dr. Rajesh Sharma (Cardiologist, New Delhi) |
-| **Patient** | `patient@hospital.com` | `patient123` | Rahul Sharma (Patient, Pincode 110001) |
-
-*(You can also use the **Demo: Patient / Doctor / Admin** buttons in the navigation bar for instant 1-click sign in!)*
+```
+Hospital Doctor Appointment mangement System/
+├── package.json                    # Workspace root scripts (dev, seed, install:all)
+├── README.md                       # Comprehensive documentation
+├── client/                         # Frontend Application (React 18 + Vite)
+│   ├── index.html                  # HTML5 entry with responsive viewport tags
+│   ├── package.json                # Frontend dependencies
+│   ├── vite.config.js              # Vite bundler configuration
+│   └── src/
+│       ├── main.jsx                # Application bootstrap
+│       ├── App.jsx                 # Central router with role-based protected routes
+│       ├── index.css               # Global responsive design system & CSS variables
+│       ├── components/             # Reusable UI components
+│       │   ├── common/             # Navbar, Footer, LoadingSpinners, NotificationBell
+│       │   ├── doctor/             # DoctorCard, FilterBar, SlotPicker
+│       │   ├── appointment/        # BookingModal, StatusBadge, RescheduleModal
+│       │   └── prescription/       # PrescriptionSheet, MedicineRow
+│       ├── context/                # React Context providers (AuthContext)
+│       ├── pages/                  # Page views grouped by domain
+│       │   ├── public/             # HomePage, DoctorSearchPage, HospitalListPage
+│       │   ├── auth/               # LoginPage, RegisterPage, AdminLoginPage
+│       │   ├── patient/            # PatientDashboard, MyAppointments, MyPrescriptions
+│       │   ├── doctor/             # DoctorDashboard, ManageAvailability, PatientConsultation
+│       │   └── admin/              # AdminDashboard, ManageDoctors, ManageHospitals
+│       ├── services/               # Axios API client modules
+│       └── utils/                  # Helper utilities (passwordSecurity, dateUtils)
+└── server/                         # Backend Application (Node.js + Express)
+    ├── server.js                   # Express application entry & database bootstrap
+    ├── package.json                # Backend dependencies
+    ├── .env                        # Environment configuration
+    ├── .env.example                # Template environment variables
+    ├── config/                     # Database connection & memory-server manager
+    ├── controllers/                # Business logic handlers
+    │   ├── authController.js       # Register, login, email OTP forgot/reset password
+    │   ├── searchController.js     # Pincode search & geolocation calculations
+    │   ├── doctorController.js     # Doctor profiles & verification
+    │   ├── hospitalController.js   # Hospital registry
+    │   ├── appointmentController.js# Slot locking, booking, reschedule, cancel
+    │   ├── prescriptionController.js# Issue & read prescriptions (IDOR-protected)
+    │   ├── reviewController.js     # Verified reviews & rating recalculation
+    │   └── adminController.js      # Executive telemetry & user management
+    ├── middleware/                 # Express middleware
+    │   └── auth.js                 # JWT verification, RBAC guard & token validation
+    ├── models/                     # Mongoose schemas & data validation
+    │   ├── User.js                 # User credentials, roles, reset tokens
+    │   ├── Doctor.js               # Specialization, qualifications, fees, rating
+    │   ├── Hospital.js             # Facilities, GeoJSON location, departments
+    │   ├── Specialization.js       # Medical categories
+    │   ├── Availability.js         # Daily slots and booking status
+    │   ├── Appointment.js          # Appointment details, status, timestamps
+    │   ├── Prescription.js         # Clinical diagnosis & medicine regimens
+    │   ├── Review.js               # Star ratings & comments
+    │   └── Notification.js         # Real-time user alert records
+    ├── routes/                     # REST API route declarations
+    ├── seeder/                     # Database seed scripts
+    │   ├── seedDelhiNCR.js         # Master Delhi-NCR medical corridor seeder
+    │   └── seedData.js             # Extended sample dataset
+    └── utils/                      # Server utilities
+        ├── emailService.js         # Nodemailer OTP email transporter
+        └── passwordSecurity.js     # Breach-checking & password entropy tools
+```
 
 ---
 
 ## 🚀 Quick Start Guide
 
 ### **Prerequisites**
-- Node.js (v18 or higher)
-- npm (v9 or higher)
+- **Node.js**: v18.0.0 or higher
+- **npm**: v9.0.0 or higher
+- **MongoDB**: Local MongoDB service running on `mongodb://127.0.0.1:27017` *(optional; embedded MongoDB automatically starts if local instance is not detected)*
 
-### **1. Clone & Install Dependencies**
+---
+
+### **1. Install Dependencies**
+
+Install all dependencies for root, backend, and frontend with a single command:
+
 ```bash
-# In the project root directory
 npm run install:all
 ```
 
-### **2. Seed the Database**
-Populate hospitals across multiple Indian pincodes, doctors, schedules, sample appointments, and prescriptions:
+---
+
+### **2. Environment Configuration**
+
+Configure the server environment variables in `server/.env` (or copy from `server/.env.example`):
+
+```ini
+PORT=5001
+NODE_ENV=development
+MONGODB_URI=mongodb://127.0.0.1:27017/hospital_management
+JWT_SECRET=hospital_appointment_secret_jwt_key_2026_super_secure
+JWT_EXPIRE=7d
+
+# -------------------------------------------------------------
+# REAL EMAIL DELIVERY CONFIGURATION (FOR FORGOT PASSWORD OTP)
+# -------------------------------------------------------------
+# Option A: Gmail App Password
+EMAIL_SERVICE=gmail
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_16_character_app_password
+
+# Option B: Resend API (HTTPS port 443)
+# RESEND_API_KEY=re_xxxxxxxxxxxx
+
+# Option C: Custom SMTP
+# SMTP_HOST=smtp.gmail.com
+# SMTP_PORT=587
+# SMTP_USER=your_email@gmail.com
+# SMTP_PASS=your_app_password
+# EMAIL_FROM="Care Connect <no-reply@careconnect.in>"
+```
+
+---
+
+### **3. Seed the Database**
+
+Populate hospitals across Delhi, Modinagar, Ghaziabad, and Meerut with doctors, schedules, sample appointments, and prescriptions:
+
 ```bash
 npm run seed
 ```
 
-### **3. Start Both Backend & Frontend Concurrently**
+---
+
+### **4. Start the Application**
+
+Launch both the backend API and the frontend application concurrently:
+
 ```bash
 npm run dev
 ```
 
-- **Frontend Application**: `http://localhost:3000`
-- **Backend REST API**: `http://localhost:5001`
-- **API Health Check**: `http://localhost:5001/api/health`
+- **Frontend Web Application**: [http://localhost:3000](http://localhost:3000)
+- **Backend REST API**: [http://localhost:5001](http://localhost:5001)
+- **API Health Check**: [http://localhost:5001/api/health](http://localhost:5001/api/health)
 
 ---
 
-## 📡 REST API Reference Summary
+## 📡 REST API Reference
 
-### **Authentication**
-- `POST /api/auth/register` — Register patient account
-- `POST /api/auth/login` — Login user (Patient/Doctor/Admin)
-- `GET  /api/auth/me` — Get authenticated user profile
+### **Authentication & Password Recovery**
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| `POST` | `/api/auth/register` | Register a new patient account | No |
+| `POST` | `/api/auth/login` | Sign in (Patient, Doctor, Admin) and receive JWT | No |
+| `GET` | `/api/auth/me` | Fetch authenticated user profile | Yes (Bearer) |
+| `POST` | `/api/auth/forgot-password` | Generate & email 6-digit verification code | No |
+| `POST` | `/api/auth/reset-password` | Verify OTP and set new secure password | No |
+| `POST` | `/api/auth/check-breach` | Real-time check if password is in breach list | No |
 
-### **Pincode Search & Discovery**
-- `GET  /api/search/doctors?pincode=110001&radius=30` — Proximity doctor search with pincode distance
-- `GET  /api/search/pincodes` — Autocomplete suggested postal codes and locations
-- `GET  /api/search/hospitals` — Search hospitals by pincode, city, or facilities
+### **Search & Location Discovery**
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| `GET` | `/api/search/doctors?pincode=110001&radius=30` | Pincode-based proximity doctor search | No |
+| `GET` | `/api/search/pincodes?query=1100` | Autocomplete postal pincodes and cities | No |
+| `GET` | `/api/search/hospitals` | Search partner hospitals by location & facility | No |
 
 ### **Doctor & Hospital Management**
-- `GET  /api/doctors` — List all active doctors
-- `GET  /api/doctors/:id` — Get doctor profile with reviews
-- `PUT  /api/doctors/:id/verify` — Toggle doctor verification (Admin)
-- `GET  /api/hospitals` — List all partner hospitals
-- `POST /api/hospitals` — Add new hospital (Admin)
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| `GET` | `/api/doctors` | List verified doctors with filters | No |
+| `GET` | `/api/doctors/:id` | Get complete doctor profile, OPD hours, and reviews | No |
+| `PUT` | `/api/doctors/:id/verify` | Admin toggles doctor verification status | Admin |
+| `GET` | `/api/hospitals` | List all hospitals | No |
+| `POST` | `/api/hospitals` | Register a new hospital | Admin |
 
-### **Appointments & Availability**
-- `GET  /api/availability/doctor/:doctorId?date=YYYY-MM-DD` — Doctor slots for specific date
-- `POST /api/appointments` — Book new appointment slot
-- `GET  /api/appointments` — List appointments (Role-filtered)
-- `PUT  /api/appointments/:id/confirm` — Doctor confirms appointment
-- `PUT  /api/appointments/:id/cancel` — Cancel appointment with reason
-- `PUT  /api/appointments/:id/reschedule` — Reschedule date & slot
+### **Availability & Appointments**
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| `GET` | `/api/availability/doctor/:doctorId?date=YYYY-MM-DD` | Get available time slots for a doctor | No |
+| `POST` | `/api/appointments` | Book a specific time slot | Patient |
+| `GET` | `/api/appointments` | Fetch appointments (Role-scoped) | Yes |
+| `PUT` | `/api/appointments/:id/confirm` | Doctor confirms appointment | Doctor |
+| `PUT` | `/api/appointments/:id/cancel` | Cancel appointment and free time slot | Yes |
+| `PUT` | `/api/appointments/:id/reschedule` | Reschedule appointment date and time slot | Yes |
 
 ### **Prescriptions & Reviews**
-- `POST /api/prescriptions` — Issue digital consultation & prescription
-- `GET  /api/prescriptions/appointment/:appointmentId` — Fetch prescription
-- `POST /api/reviews` — Submit verified patient review (Completed visits only)
-- `GET  /api/admin/dashboard` — Executive telemetry analytics
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| `POST` | `/api/prescriptions` | Doctor creates digital consultation & prescription | Doctor |
+| `GET` | `/api/prescriptions/appointment/:appointmentId` | Fetch prescription details (IDOR-protected) | Yes |
+| `POST` | `/api/reviews` | Submit verified patient review (Completed visits) | Patient |
+
+### **Admin Console**
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| `GET` | `/api/admin/dashboard` | Executive telemetry (users, revenue, trends) | Admin |
+| `PUT` | `/api/admin/users/:id/block` | Toggle user block/suspend status | Admin |
 
 ---
 
-## 💻 Tech Stack Overview
+## 🔒 Security & Data Protection Standards
 
-- **Frontend**: React 18, React Router v6, Lucide React Icons, Canvas Confetti, Custom Glassmorphic Medical CSS.
-- **Backend**: Node.js, Express.js, Mongoose, JWT (JSON Web Tokens), bcryptjs, Morgan.
-- **Database**: MongoDB (Local `mongod` or Embedded In-Process Runner with automatic seeding).
-- **Tooling**: Vite Bundler.
+1. **Enterprise JWT Authentication**:
+   - Every protected route enforces `Authorization: Bearer <token>`.
+   - Tampered tokens, expired tokens, or missing tokens receive immediate `401 Unauthorized` responses with standardized error codes (`TOKEN_EXPIRED`, `TOKEN_INVALID`, `AUTH_TOKEN_REQUIRED`).
+
+2. **Role-Based Access Control (RBAC)**:
+   - Specific routes require strict role verification (`patient`, `doctor`, `admin`).
+   - Unauthorized role attempts are rejected with `403 Forbidden` (`FORBIDDEN_ROLE`).
+
+3. **Insecure Direct Object Reference (IDOR) Protection**:
+   - Appointment and prescription endpoints verify that the requesting user is either the assigned patient, the attending doctor, or a system administrator.
+   - Patients cannot inspect or manipulate other patients' records by guessing appointment IDs.
+
+4. **Breach-Resistant Password Security**:
+   - Passwords are validated both client-side and server-side to prevent the use of common breached passwords (e.g. `admin123`, `patient123`).
+   - High-entropy admin credentials (`Anupam@9642`) prevent browser password manager breach alerts.
+   - 1-click secure password generation assists users in creating resilient passwords during registration and reset flows.
+
+5. **Direct Email OTP Verification**:
+   - Password reset verification codes (6 digits) are generated securely and sent to the user's registered email with strict expiration timers (15 minutes).
+
+---
+
+## 📱 Responsive Design Standards
+
+The frontend has been built from the ground up to support all screen form factors:
+
+- **Mobile (< 768px)**: Compact header with slide-out drawer navigation, touch-friendly buttons (min 44px), single-column stacked cards, and scrollable slot selectors.
+- **Tablet (768px – 1024px)**: 2-column adaptive grids, responsive filter toolbars, and streamlined table displays.
+- **Desktop (> 1024px)**: Full multi-column dashboard layouts, sticky sidebar navigation, detailed telemetry charts, and expanded modal views.
+
+---
+
+## 🛠️ Tech Stack Details
+
+- **Frontend**: React 18, React Router v6, Lucide React Icons, Canvas Confetti, Axios, Vite.
+- **Backend**: Node.js, Express.js, Mongoose 8, JSON Web Tokens (jsonwebtoken), bcryptjs, Nodemailer, Morgan.
+- **Database**: MongoDB (Local standalone service or Embedded In-Memory Runner).
+- **Styling**: Modern Vanilla CSS Design System with CSS variables, Glassmorphism, and responsive media queries.
+
+---
+
+## 📄 License & Attribution
+
+Developed for **CARE CONNECT Healthcare Platform**. Distributed under the **ISC License**.
+For support or inquiries: **+91 98765 43210** | **connect@careconnect.in**
