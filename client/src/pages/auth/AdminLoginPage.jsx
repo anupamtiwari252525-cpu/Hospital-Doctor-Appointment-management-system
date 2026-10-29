@@ -15,9 +15,11 @@ import {
   Building2,
   ChevronLeft,
   ShieldCheck,
+  Sparkles,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { authAPI } from '../../services/api';
+import { checkPasswordBreachStatus, generateBreachProofPassword } from '../../utils/passwordSecurity';
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
@@ -103,8 +105,15 @@ export default function AdminLoginPage() {
     setForgotError('');
     setForgotSuccess('');
 
-    if (newPassword.length < 6) {
-      setForgotError('New password must be at least 6 characters long.');
+    const breachCheck = checkPasswordBreachStatus(newPassword);
+    if (breachCheck.isBreached) {
+      setForgotError(breachCheck.reason);
+      setForgotLoading(false);
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      setForgotError('New admin password must be at least 8 characters long.');
       setForgotLoading(false);
       return;
     }
@@ -688,24 +697,50 @@ export default function AdminLoginPage() {
                   </div>
 
                   <div style={{ marginBottom: '14px' }}>
-                    <label
-                      style={{
-                        display: 'block',
-                        fontSize: '0.82rem',
-                        fontWeight: 600,
-                        color: '#cbd5e1',
-                        marginBottom: '6px',
-                      }}
-                    >
-                      New Admin Password *
-                    </label>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                      <label
+                        style={{
+                          display: 'block',
+                          fontSize: '0.82rem',
+                          fontWeight: 600,
+                          color: '#cbd5e1',
+                          margin: 0,
+                        }}
+                      >
+                        New Admin Password (Min 8 Characters) *
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const secure = generateBreachProofPassword();
+                          setNewPassword(secure);
+                          setConfirmPassword(secure);
+                        }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#38bdf8',
+                          fontSize: '0.74rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                        }}
+                        title="Generate a secure password guaranteed to never trigger breach warnings"
+                      >
+                        <Sparkles size={12} />
+                        <span>Generate Secure Password</span>
+                      </button>
+                    </div>
                     <div style={{ position: 'relative' }}>
                       <input
                         type="password"
                         required
+                        autoComplete="new-password"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                        placeholder="At least 6 characters"
+                        placeholder="At least 8 characters"
                         style={{
                           width: '100%',
                           padding: '11px 14px 11px 38px',
@@ -746,6 +781,7 @@ export default function AdminLoginPage() {
                       <input
                         type="password"
                         required
+                        autoComplete="new-password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder="Re-type new password"

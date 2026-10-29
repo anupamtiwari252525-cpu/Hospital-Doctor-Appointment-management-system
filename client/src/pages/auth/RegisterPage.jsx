@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { hospitalAPI } from '../../services/api';
+import { checkPasswordBreachStatus, generateBreachProofPassword } from '../../utils/passwordSecurity';
 
 const SPECIALIZATIONS = [
   'General Medicine',
@@ -256,8 +257,14 @@ export default function RegisterPage() {
       setError('Please provide a valid email address.');
       return;
     }
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long.');
+    // Check against breached passwords
+    const breachCheck = checkPasswordBreachStatus(formData.password);
+    if (breachCheck.isBreached) {
+      setError(breachCheck.reason);
+      return;
+    }
+    if (formData.password.length < 8) {
+      setError('Password must be at least 8 characters long with uppercase, numbers, and symbols.');
       return;
     }
     if (formData.password !== formData.confirmPassword) {
@@ -1146,9 +1153,39 @@ export default function RegisterPage() {
 
               {/* Section 4: Security & Password */}
               <div style={{ marginBottom: '24px' }}>
-                <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--slate-900)', borderBottom: '1.5px solid var(--slate-100)', paddingBottom: '8px', marginBottom: '16px' }}>
-                  4. Password & Security
-                </h4>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1.5px solid var(--slate-100)', paddingBottom: '8px', marginBottom: '16px' }}>
+                  <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--slate-900)', margin: 0 }}>
+                    4. Password & Security
+                  </h4>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const securePass = generateBreachProofPassword();
+                      setFormData(prev => ({
+                        ...prev,
+                        password: securePass,
+                        confirmPassword: securePass,
+                      }));
+                      setShowPassword(true);
+                      setShowConfirmPassword(true);
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--primary-600)',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}
+                    title="Generate a mathematically unique password guaranteed to never trigger browser breach alerts"
+                  >
+                    <Sparkles size={13} />
+                    <span>Generate Secure Password</span>
+                  </button>
+                </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
                   <div className="form-group" style={{ margin: 0 }}>
@@ -1159,6 +1196,7 @@ export default function RegisterPage() {
                         name="password"
                         className="form-control"
                         placeholder="••••••••"
+                        autoComplete="new-password"
                         value={formData.password}
                         onChange={handleChange}
                         required
@@ -1192,6 +1230,7 @@ export default function RegisterPage() {
                         name="confirmPassword"
                         className="form-control"
                         placeholder="••••••••"
+                        autoComplete="new-password"
                         value={formData.confirmPassword}
                         onChange={handleChange}
                         required
@@ -1218,9 +1257,33 @@ export default function RegisterPage() {
                   </div>
                 </div>
 
-                {/* Password Strength Indicator */}
+                {/* Password Strength & Breach Indicator */}
                 {formData.password && (
                   <div style={{ marginTop: '10px' }}>
+                    {(() => {
+                      const check = checkPasswordBreachStatus(formData.password);
+                      if (check.isBreached) {
+                        return (
+                          <div style={{
+                            fontSize: '0.75rem',
+                            color: '#b91c1c',
+                            background: '#fee2e2',
+                            border: '1px solid #fecaca',
+                            padding: '6px 10px',
+                            borderRadius: '6px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            fontWeight: 600,
+                            marginBottom: '6px',
+                          }}>
+                            <AlertCircle size={14} style={{ flexShrink: 0 }} />
+                            <span>⚠️ Found in internet breach leaks! Browser will alert on this. Click "Generate Secure Password" above or choose a unique password.</span>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '4px' }}>
                       <span style={{ color: 'var(--slate-500)' }}>Password Strength:</span>
                       <span style={{ color: strength.color, fontWeight: 700 }}>{strength.label}</span>

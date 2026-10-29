@@ -16,10 +16,12 @@ import {
   KeyRound,
   RefreshCw,
   Check,
+  Sparkles,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useAuth } from '../../context/AuthContext';
 import { authAPI } from '../../services/api';
+import { checkPasswordBreachStatus, generateBreachProofPassword } from '../../utils/passwordSecurity';
 
 export default function LoginPage() {
   // Sign In State
@@ -103,8 +105,15 @@ export default function LoginPage() {
       return;
     }
 
-    if (newPassword.length < 6) {
-      setForgotError('New password must be at least 6 characters long.');
+    // Real-time breach check to prevent browser data breach warnings
+    const breachCheck = checkPasswordBreachStatus(newPassword);
+    if (breachCheck.isBreached) {
+      setForgotError(breachCheck.reason);
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      setForgotError('New password must be at least 8 characters long for security.');
       return;
     }
 
@@ -640,12 +649,40 @@ export default function LoginPage() {
 
                   {/* New Password Input */}
                   <div className="form-group" style={{ marginBottom: '14px' }}>
-                    <label className="form-label">New Password (Min 6 Characters) *</label>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                      <label className="form-label" style={{ margin: 0 }}>New Password (Min 8 Characters) *</label>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const securePass = generateBreachProofPassword();
+                          setNewPassword(securePass);
+                          setConfirmPassword(securePass);
+                          setShowNewPassword(true);
+                          setShowConfirmPassword(true);
+                        }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: 'var(--primary-600)',
+                          fontSize: '0.78rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                        }}
+                        title="Generate a password guaranteed to never trigger browser breach alerts"
+                      >
+                        <Sparkles size={13} />
+                        <span>Generate Secure Password</span>
+                      </button>
+                    </div>
                     <div style={{ position: 'relative' }}>
                       <input
                         type={showNewPassword ? 'text' : 'password'}
                         className="form-control"
                         placeholder="••••••••"
+                        autoComplete="new-password"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         required
@@ -678,9 +715,47 @@ export default function LoginPage() {
                         {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                       </button>
                     </div>
-                    <span style={{ fontSize: '0.74rem', color: 'var(--slate-500)', marginTop: '4px', display: 'block' }}>
-                      💡 Tip: Use a unique combination of letters, numbers, and symbols (e.g. <code>CareSecure#2026!</code>) so Google Password Manager never alerts on reused dictionary passwords.
-                    </span>
+
+                    {/* Real-Time Breached Password Warning & Strength Badge */}
+                    {newPassword && (
+                      <div style={{ marginTop: '6px' }}>
+                        {(() => {
+                          const check = checkPasswordBreachStatus(newPassword);
+                          if (check.isBreached) {
+                            return (
+                              <div style={{
+                                fontSize: '0.74rem',
+                                color: '#b91c1c',
+                                background: '#fee2e2',
+                                border: '1px solid #fecaca',
+                                padding: '6px 10px',
+                                borderRadius: '6px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                fontWeight: 600,
+                              }}>
+                                <AlertCircle size={14} style={{ flexShrink: 0 }} />
+                                <span>⚠️ Found in internet breach leaks! Browser will alert on this. Click "Generate Secure Password" above or choose a unique password.</span>
+                              </div>
+                            );
+                          }
+                          if (newPassword.length < 8) {
+                            return (
+                              <div style={{ fontSize: '0.74rem', color: '#b45309', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
+                                <span>Minimum 8 characters required (currently {newPassword.length}).</span>
+                              </div>
+                            );
+                          }
+                          return (
+                            <div style={{ fontSize: '0.74rem', color: '#047857', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px', fontWeight: 600 }}>
+                              <CheckCircle2 size={13} />
+                              <span>Safe & Breach-Proof (Won't trigger Chrome alerts)</span>
+                            </div>
+                          );
+                        })()}
+                      </div>
+                    )}
                   </div>
 
                   {/* Confirm New Password Input */}
@@ -691,6 +766,7 @@ export default function LoginPage() {
                         type={showConfirmPassword ? 'text' : 'password'}
                         className="form-control"
                         placeholder="••••••••"
+                        autoComplete="new-password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required

@@ -66,9 +66,9 @@ export const AuthProvider = ({ children }) => {
   // Quick 1-Click Demo Login Helper
   const quickDemoLogin = async (role) => {
     const creds = {
-      patient: { email: 'patient@hospital.com', password: 'patient123' },
-      doctor: { email: 'doctor@hospital.com', password: 'doctor123' },
-      admin: { email: 'admin@hospital.com', password: 'admin123' },
+      patient: { email: 'patient@hospital.com', password: 'Patient#CareConnect2026!' },
+      doctor: { email: 'doctor@hospital.com', password: 'Doctor#MedPortal2026!' },
+      admin: { email: 'admin@hospital.com', password: 'Admin#MasterAuth2026!' },
     };
 
     if (creds[role]) {

@@ -8,6 +8,7 @@ const {
   searchPincodes,
 } = require('./pincodeHelper');
 const { generateTimeSlots } = require('./slotGenerator');
+const { validatePasswordBreachStatus, COMMON_BREACHED_PASSWORDS } = require('./passwordSecurity');
 
 module.exports = {
   sendPasswordResetEmail,
@@ -18,4 +19,7 @@ module.exports = {
   getNearbyPincodes,
   searchPincodes,
   generateTimeSlots,
+  validatePasswordBreachStatus,
+  COMMON_BREACHED_PASSWORDS,
 };
+
