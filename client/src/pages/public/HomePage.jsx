@@ -381,7 +381,7 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '18px' }}>
+        <div className="grid-responsive-specializations">
           {specializations.map((spec, i) => {
             const Icon = spec.icon;
             return (
@@ -467,7 +467,7 @@ export default function HomePage() {
         </div>
 
         {/* Doctor Cards Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))', gap: '22px' }}>
+        <div className="grid-responsive-doctors">
           {displayedDoctors.length === 0 ? (
             <div className="glass-card" style={{ gridColumn: '1 / -1', padding: '40px', textAlign: 'center', color: 'var(--slate-500)' }}>
               No doctors found matching this location filter right now.
@@ -505,7 +505,7 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '22px' }}>
+        <div className="grid-responsive-doctors">
           {displayedHospitals.map((hospital) => (
             <HospitalCard key={hospital._id} hospital={hospital} />
           ))}

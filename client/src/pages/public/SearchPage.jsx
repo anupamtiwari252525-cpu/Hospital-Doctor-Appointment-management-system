@@ -54,6 +54,7 @@ export default function SearchPage() {
   const [selectedDoctorForProfile, setSelectedDoctorForProfile] = useState(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   const DOCTORS_PER_PAGE = 18;
 
   // Sync state with URL params
@@ -192,12 +193,44 @@ export default function SearchPage() {
         </div>
       </div>
 
+      {/* Mobile Filter Toggle Button Bar */}
+      <div className="mobile-filter-bar">
+        <button
+          type="button"
+          className="btn btn-secondary btn-sm"
+          onClick={() => setShowMobileFilters(!showMobileFilters)}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+        >
+          <SlidersHorizontal size={15} />
+          <span>{showMobileFilters ? 'Hide Filters' : 'Filter & Sort'}</span>
+          {(specialization !== 'All' || minRating !== '0' || query) && (
+            <span style={{ background: 'var(--primary-600)', color: '#ffffff', borderRadius: '999px', padding: '1px 7px', fontSize: '0.72rem', fontWeight: 700 }}>
+              Active
+            </span>
+          )}
+        </button>
+        <button
+          type="button"
+          onClick={clearAllFilters}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: 'var(--primary-700)',
+            fontSize: '0.8rem',
+            fontWeight: 600,
+            cursor: 'pointer',
+          }}
+        >
+          Reset All
+        </button>
+      </div>
+
       {/* Main Content Layout: Sidebar Filters + Doctor Cards Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '270px 1fr', gap: '28px', alignItems: 'flex-start' }}>
+      <div className="search-layout-grid">
         
         {/* Left Filter Sidebar */}
         <div
-          className="glass-card"
+          className={`glass-card search-filter-sidebar ${showMobileFilters ? 'mobile-open' : 'filter-sidebar-desktop'}`}
           style={{
             padding: '22px',
             position: 'sticky',
@@ -435,7 +468,7 @@ export default function SearchPage() {
                 )}
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
+              <div className="grid-responsive-doctors">
                 {doctors.slice((currentPage - 1) * DOCTORS_PER_PAGE, currentPage * DOCTORS_PER_PAGE).map((doc) => (
                   <DoctorCard
                     key={doc._id}

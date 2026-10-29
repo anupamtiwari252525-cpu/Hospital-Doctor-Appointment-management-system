@@ -678,6 +678,9 @@ export default function LoginPage() {
                         {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                       </button>
                     </div>
+                    <span style={{ fontSize: '0.74rem', color: 'var(--slate-500)', marginTop: '4px', display: 'block' }}>
+                      💡 Tip: Use a unique combination of letters, numbers, and symbols (e.g. <code>CareSecure#2026!</code>) so Google Password Manager never alerts on reused dictionary passwords.
+                    </span>
                   </div>
 
                   {/* Confirm New Password Input */}

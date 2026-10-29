@@ -480,11 +480,9 @@ export default function BookingModal({ doctor, isOpen, onClose, onBookingSuccess
                   </div>
                 ) : (
                   <div
+                    className="slot-grid-responsive"
                     style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fill, minmax(105px, 1fr))',
-                      gap: '8px',
-                      maxHeight: '180px',
+                      maxHeight: '190px',
                       overflowY: 'auto',
                       padding: '4px',
                     }}

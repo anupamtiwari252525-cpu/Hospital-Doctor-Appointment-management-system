@@ -76,17 +76,7 @@ export default function PincodeSearchBar({ initialPincode = '', initialQuery = '
     <div ref={wrapperRef} style={{ width: '100%', position: 'relative' }}>
       <form
         onSubmit={handleSearchSubmit}
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1.2fr 1fr 180px auto',
-          gap: '8px',
-          background: '#ffffff',
-          padding: '8px',
-          borderRadius: 'var(--radius-xl)',
-          boxShadow: '0 12px 32px rgba(15, 23, 42, 0.12)',
-          border: '1.5px solid var(--slate-200)',
-          alignItems: 'center',
-        }}
+        className="pincode-search-form"
       >
         {/* Pincode Input Box */}
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
@@ -210,7 +200,7 @@ export default function PincodeSearchBar({ initialPincode = '', initialQuery = '
         {/* Search Submit Button */}
         <button
           type="submit"
-          className="btn btn-primary"
+          className="btn btn-primary search-submit-btn"
           style={{ padding: '13px 24px', borderRadius: 'var(--radius-lg)' }}
         >
           <Search size={18} />

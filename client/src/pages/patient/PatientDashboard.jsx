@@ -87,7 +87,7 @@ export default function PatientDashboard() {
   const cancelledAppointments = appointments.filter((a) => a.status === 'cancelled');
 
   return (
-    <div style={{ maxWidth: '1240px', margin: '30px auto', padding: '0 20px' }}>
+    <div className="container-responsive" style={{ margin: '30px auto' }}>
       
       {/* Welcome & Patient Profile Card */}
       <div
@@ -128,15 +128,7 @@ export default function PatientDashboard() {
       </div>
 
       {/* Tabs Bar */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '8px',
-          borderBottom: '2px solid var(--slate-200)',
-          marginBottom: '24px',
-          overflowX: 'auto',
-        }}
-      >
+      <div className="dashboard-tabs-scroll">
         {[
           { key: 'upcoming', label: `Upcoming Appointments (${upcomingAppointments.length})`, icon: Calendar },
           { key: 'completed', label: `Consultation History (${completedAppointments.length})`, icon: CheckCircle2 },
@@ -181,7 +173,7 @@ export default function PatientDashboard() {
         </div>
       ) : activeTab === 'prescriptions' ? (
         /* Prescriptions Tab */
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
+        <div className="grid-responsive-doctors">
           {prescriptions.length === 0 ? (
             <div className="glass-card" style={{ gridColumn: '1 / -1', padding: '50px', textAlign: 'center', color: 'var(--slate-500)' }}>
               <FileText size={36} style={{ color: 'var(--slate-300)', margin: '0 auto 10px' }} />
@@ -265,15 +257,7 @@ export default function PatientDashboard() {
               return (
                 <div
                   key={apt._id}
-                  className="glass-card"
-                  style={{
-                    padding: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    flexWrap: 'wrap',
-                    gap: '16px',
-                  }}
+                  className="glass-card responsive-apt-card"
                 >
                   {/* Left: Doctor & Date */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -328,7 +312,7 @@ export default function PatientDashboard() {
                   </div>
 
                   {/* Right Actions */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <div className="responsive-apt-card-actions">
                     {apt.status === 'completed' && (
                       <>
                         {apt.hasPrescription && (

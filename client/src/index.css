@@ -407,3 +407,317 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* ===================================================================
+   MODULAR RESPONSIVE DESIGN SYSTEM
+   Optimized for Mobile (<=640px), Tablet (641px - 1024px), Laptop/Desktop (>=1025px)
+   =================================================================== */
+
+/* Container wrapper */
+.container-responsive {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+@media (max-width: 640px) {
+  .container-responsive {
+    padding: 0 14px;
+  }
+}
+
+/* Touch Friendly Targets */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Responsive Navigation */
+.nav-desktop-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-mobile-toggle {
+  display: none;
+  background: var(--slate-100);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  padding: 8px;
+  color: var(--slate-800);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.nav-mobile-toggle:hover {
+  background: var(--slate-200);
+  color: var(--primary-700);
+}
+
+@media (max-width: 868px) {
+  .nav-desktop-links {
+    display: none !important;
+  }
+  .nav-mobile-toggle {
+    display: flex !important;
+  }
+}
+
+/* Mobile Navigation Drawer */
+.mobile-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 999;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.mobile-drawer-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 85%;
+  max-width: 340px;
+  background: #ffffff;
+  z-index: 1000;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  animation: slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+/* Responsive Search Grid (Search Page) */
+.search-layout-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 28px;
+  align-items: flex-start;
+}
+
+.mobile-filter-bar {
+  display: none;
+}
+
+@media (max-width: 960px) {
+  .search-layout-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .mobile-filter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    background: #ffffff;
+    border: 1px solid var(--slate-200);
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+  }
+  .search-filter-sidebar {
+    position: static !important;
+    max-height: none !important;
+  }
+}
+
+/* Responsive Doctor / Hospital Cards Grids */
+.grid-responsive-doctors {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  gap: 22px;
+}
+
+@media (max-width: 640px) {
+  .grid-responsive-doctors {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* Responsive Specializations Grid */
+.grid-responsive-specializations {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1024px) {
+  .grid-responsive-specializations {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .grid-responsive-specializations {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+/* Responsive Dashboards & Horizontally Scrollable Tabs */
+.dashboard-tabs-scroll {
+  display: flex;
+  gap: 8px;
+  border-bottom: 2px solid var(--slate-200);
+  margin-bottom: 24px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.dashboard-tabs-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Responsive Appointment Cards */
+.responsive-apt-card {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+@media (max-width: 680px) {
+  .responsive-apt-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
+  }
+  .responsive-apt-card-actions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .responsive-apt-card-actions button,
+  .responsive-apt-card-actions a {
+    width: 100% !important;
+    justify-content: center;
+  }
+}
+
+/* Responsive Table Wrapper */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--slate-200);
+  background: #ffffff;
+}
+
+/* Form Row Responsive (2 columns on tablet/desktop, 1 column on mobile) */
+.form-row-responsive {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 640px) {
+  .form-row-responsive {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+/* Responsive Slot Grid in Booking Modal */
+.slot-grid-responsive {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 480px) {
+  .slot-grid-responsive {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+}
+
+/* Modal Bottom Sheet on Mobile */
+@media (max-width: 640px) {
+  .modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .modal-content {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    max-height: 92vh;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+  }
+}
+
+/* Responsive Pincode Search Bar */
+.pincode-search-form {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 180px auto;
+  gap: 8px;
+  background: #ffffff;
+  padding: 8px;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  border: 1.5px solid var(--slate-200);
+  align-items: center;
+}
+
+@media (max-width: 960px) {
+  .pincode-search-form {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 12px;
+  }
+  .pincode-search-form .search-submit-btn {
+    grid-column: 1 / -1;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 580px) {
+  .pincode-search-form {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .pincode-search-form .search-submit-btn {
+    grid-column: 1;
+    width: 100%;
+  }
+}
+
+/* Admin Overview Grid */
+.admin-overview-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 960px) {
+  .admin-overview-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+

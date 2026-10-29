@@ -117,7 +117,7 @@ export default function DoctorDashboard() {
   const hospital = profile?.hospitalId || {};
 
   return (
-    <div style={{ maxWidth: '1240px', margin: '30px auto', padding: '0 20px' }}>
+    <div className="container-responsive" style={{ margin: '30px auto' }}>
       
       {/* Top Clinical Header */}
       <div
@@ -192,14 +192,7 @@ export default function DoctorDashboard() {
       </div>
 
       {/* Navigation Tabs */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '8px',
-          borderBottom: '2px solid var(--slate-200)',
-          marginBottom: '24px',
-        }}
-      >
+      <div className="dashboard-tabs-scroll">
         {[
           { key: 'appointments', label: `Consultations Queue (${appointments.length})`, icon: Calendar },
           { key: 'schedule', label: 'Availability & Shift Settings', icon: Settings },
@@ -249,15 +242,7 @@ export default function DoctorDashboard() {
               return (
                 <div
                   key={apt._id}
-                  className="glass-card"
-                  style={{
-                    padding: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    flexWrap: 'wrap',
-                    gap: '16px',
-                  }}
+                  className="glass-card responsive-apt-card"
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                     <img
@@ -287,7 +272,7 @@ export default function DoctorDashboard() {
                   </div>
 
                   {/* Doctor Actions */}
-                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+                  <div className="responsive-apt-card-actions">
                     {apt.status === 'pending' && (
                       <button
                         onClick={() => handleConfirmAppointment(apt._id)}
@@ -388,7 +373,7 @@ export default function DoctorDashboard() {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+            <div className="form-row-responsive">
               <div className="form-group">
                 <label className="form-label">OPD Start Hour</label>
                 <input
@@ -412,7 +397,7 @@ export default function DoctorDashboard() {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+            <div className="form-row-responsive">
               <div className="form-group">
                 <label className="form-label">Break Start</label>
                 <input

@@ -17,6 +17,8 @@ import {
   Mail,
   UserPlus,
   Home,
+  Menu,
+  X,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNotifications } from '../../context/NotificationContext';
@@ -26,8 +28,14 @@ export default function Navbar() {
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Close mobile drawer on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   const notifRef = useRef(null);
   const profileRef = useRef(null);
@@ -87,7 +95,7 @@ export default function Navbar() {
             </Link>
 
             {/* Navigation Links: Serial Order (1. Home, 2. About, 3. Doctor, 4. Hospital) */}
-            <nav style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <nav className="nav-desktop-links">
               <Link
                 to="/"
                 style={{
@@ -443,10 +451,262 @@ export default function Navbar() {
                 </Link>
               </div>
             )}
+            {/* Mobile Hamburger Toggle Button */}
+            <button
+              className="nav-mobile-toggle"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle Navigation Menu"
+              title="Toggle Menu"
+            >
+              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
           </div>
         </div>
       </div>
-    </div>
-  </header>
+      </div>
+
+      {/* Mobile Slide-Over Navigation Drawer */}
+      {mobileMenuOpen && (
+        <>
+          <div className="mobile-drawer-backdrop" onClick={() => setMobileMenuOpen(false)} />
+          <aside className="mobile-drawer-panel">
+            {/* Drawer Header */}
+            <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--slate-200)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '10px',
+                    background: 'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fff',
+                  }}
+                >
+                  <Activity size={18} />
+                </div>
+                <span style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--slate-900)' }}>
+                  CARE <span style={{ color: 'var(--primary-600)' }}>CONNECT</span>
+                </span>
+              </div>
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                style={{ background: 'none', border: 'none', color: 'var(--slate-500)', cursor: 'pointer', padding: '4px' }}
+                aria-label="Close menu"
+              >
+                <X size={22} />
+              </button>
+            </div>
+
+            {/* User Profile Card in Mobile Drawer */}
+            {isAuthenticated && user && (
+              <div style={{ padding: '16px 20px', background: 'var(--slate-50)', borderBottom: '1px solid var(--slate-200)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <img
+                    src={user.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80'}
+                    alt={user.name}
+                    style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover' }}
+                  />
+                  <div>
+                    <div style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--slate-900)' }}>
+                      {user.name}
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--slate-500)' }}>{user.email}</div>
+                    <span
+                      style={{
+                        fontSize: '0.65rem',
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        color: isAdmin ? '#2563eb' : isDoctor ? '#0d9488' : '#059669',
+                        background: '#fff',
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        border: '1px solid var(--slate-200)',
+                        display: 'inline-block',
+                        marginTop: '4px',
+                      }}
+                    >
+                      Role: {user.role}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Navigation Links List */}
+            <div style={{ padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
+              <Link
+                to="/"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '12px 14px',
+                  borderRadius: '10px',
+                  textDecoration: 'none',
+                  fontSize: '0.95rem',
+                  fontWeight: 600,
+                  color: location.pathname === '/' ? 'var(--primary-700)' : 'var(--slate-700)',
+                  background: location.pathname === '/' ? 'var(--primary-50)' : 'transparent',
+                }}
+              >
+                <Home size={18} style={{ color: 'var(--primary-600)' }} />
+                <span>Home</span>
+              </Link>
+
+              <Link
+                to="/about"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '12px 14px',
+                  borderRadius: '10px',
+                  textDecoration: 'none',
+                  fontSize: '0.95rem',
+                  fontWeight: 600,
+                  color: location.pathname === '/about' ? 'var(--primary-700)' : 'var(--slate-700)',
+                  background: location.pathname === '/about' ? 'var(--primary-50)' : 'transparent',
+                }}
+              >
+                <Shield size={18} style={{ color: 'var(--primary-600)' }} />
+                <span>About</span>
+              </Link>
+
+              <Link
+                to="/search"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '12px 14px',
+                  borderRadius: '10px',
+                  textDecoration: 'none',
+                  fontSize: '0.95rem',
+                  fontWeight: 600,
+                  color: location.pathname === '/search' ? 'var(--primary-700)' : 'var(--slate-700)',
+                  background: location.pathname === '/search' ? 'var(--primary-50)' : 'transparent',
+                }}
+              >
+                <Stethoscope size={18} style={{ color: 'var(--primary-600)' }} />
+                <span>Find Doctors</span>
+              </Link>
+
+              <Link
+                to="/hospitals"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '12px 14px',
+                  borderRadius: '10px',
+                  textDecoration: 'none',
+                  fontSize: '0.95rem',
+                  fontWeight: 600,
+                  color: location.pathname === '/hospitals' ? 'var(--primary-700)' : 'var(--slate-700)',
+                  background: location.pathname === '/hospitals' ? 'var(--primary-50)' : 'transparent',
+                }}
+              >
+                <Building2 size={18} style={{ color: 'var(--sapphire-600)' }} />
+                <span>Hospitals & Clinics</span>
+              </Link>
+
+              {isAuthenticated && (
+                <Link
+                  to={getDashboardLink()}
+                  onClick={() => setMobileMenuOpen(false)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '12px 14px',
+                    borderRadius: '10px',
+                    textDecoration: 'none',
+                    fontSize: '0.95rem',
+                    fontWeight: 600,
+                    color: 'var(--primary-700)',
+                    background: 'var(--primary-50)',
+                    border: '1px solid var(--primary-200)',
+                    marginTop: '6px',
+                  }}
+                >
+                  <Activity size={18} />
+                  <span>{isAdmin ? 'Admin Governance' : isDoctor ? 'Doctor Portal' : 'Patient Appointments'}</span>
+                </Link>
+              )}
+
+              <Link
+                to={isAuthenticated && isAdmin ? '/admin/portal' : '/admin/login'}
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '12px 14px',
+                  borderRadius: '10px',
+                  textDecoration: 'none',
+                  fontSize: '0.95rem',
+                  fontWeight: 600,
+                  color: '#1d4ed8',
+                  background: '#eff6ff',
+                  border: '1px solid #bfdbfe',
+                }}
+              >
+                <Shield size={18} style={{ color: '#2563eb' }} />
+                <span>Admin Portal Access</span>
+              </Link>
+            </div>
+
+            {/* Drawer Actions & Contact */}
+            <div style={{ padding: '16px 20px', borderTop: '1px solid var(--slate-200)', background: '#ffffff' }}>
+              {isAuthenticated ? (
+                <button
+                  onClick={() => {
+                    logout();
+                    setMobileMenuOpen(false);
+                    navigate('/login');
+                  }}
+                  className="btn btn-danger"
+                  style={{ width: '100%', justifyContent: 'center' }}
+                >
+                  <LogOut size={16} />
+                  <span>Sign Out</span>
+                </button>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <Link
+                    to="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="btn btn-secondary"
+                    style={{ width: '100%', justifyContent: 'center' }}
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    to="/register"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="btn btn-primary"
+                    style={{ width: '100%', justifyContent: 'center' }}
+                  >
+                    <UserPlus size={16} />
+                    <span>Create Account</span>
+                  </Link>
+                </div>
+              )}
+
+              <div style={{ marginTop: '16px', fontSize: '0.74rem', color: 'var(--slate-400)', textAlign: 'center' }}>
+                📞 24/7 Helpline: +91 98765 43210
+              </div>
+            </div>
+          </aside>
+        </>
+      )}
+    </header>
   );
 }

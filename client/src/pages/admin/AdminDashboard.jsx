@@ -131,7 +131,7 @@ export default function AdminDashboard() {
   }, []);
 
   return (
-    <div style={{ maxWidth: '1280px', margin: '30px auto', padding: '0 20px' }}>
+    <div className="container-responsive" style={{ margin: '30px auto' }}>
       
       {/* Admin Title Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
@@ -188,15 +188,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Admin Navigation Tabs */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '8px',
-          borderBottom: '2px solid var(--slate-200)',
-          marginBottom: '24px',
-          overflowX: 'auto',
-        }}
-      >
+      <div className="dashboard-tabs-scroll">
         {[
           { key: 'overview', label: 'Analytics & Trends', icon: BarChart3 },
           { key: 'hospitals', label: `Hospitals (${hospitals.length})`, icon: Building2 },
@@ -235,7 +227,7 @@ export default function AdminDashboard() {
 
       {/* Tab 1: Overview & Analytics */}
       {activeTab === 'overview' && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: '24px' }}>
+        <div className="admin-overview-grid">
           
           {/* Main Dynamic Chart Card */}
           <div className="glass-card" style={{ padding: '24px' }}>
