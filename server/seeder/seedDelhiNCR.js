@@ -386,7 +386,7 @@ async function seedDelhiNCROnly(standalone = true) {
   const adminUser = await User.create({
     name: 'Care Connect Administrator',
     email: 'admin@hospital.com',
-    password: 'admin123',
+    password: 'Anupam@9642',
     role: 'admin',
     phone: '+91 11 2336 0001',
     city: 'New Delhi',
@@ -661,7 +661,7 @@ async function seedDelhiNCROnly(standalone = true) {
   console.log(` - Slot Records:     ${await Availability.countDocuments()}`);
   console.log('========================================================');
   console.log('DEMO LOGINS:');
-  console.log('1. Admin:   admin@hospital.com   / admin123');
+  console.log('1. Admin:   admin@hospital.com   / Anupam@9642');
   console.log('2. Doctor:  doctor@hospital.com  / doctor123');
   console.log('3. Patient: patient@hospital.com / patient123');
   console.log('========================================================');

@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }) => {
     const creds = {
       patient: { email: 'patient@hospital.com', password: 'Patient#CareConnect2026!' },
       doctor: { email: 'doctor@hospital.com', password: 'Doctor#MedPortal2026!' },
-      admin: { email: 'admin@hospital.com', password: 'Admin#MasterAuth2026!' },
+      admin: { email: 'admin@hospital.com', password: 'Anupam@9642' },
     };
 
     if (creds[role]) {

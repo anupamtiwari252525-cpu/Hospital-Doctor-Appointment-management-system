@@ -112,7 +112,7 @@ Pre-populated accounts ready for instant 1-click testing or manual login:
 
 | Role | Email | Password | Details |
 |---|---|---|---|
-| **Admin** | `admin@hospital.com` | `admin123` | System Administrator Console |
+| **Admin** | `admin@hospital.com` | `Anupam@9642` | System Administrator Console |
 | **Doctor** | `doctor@hospital.com` | `doctor123` | Dr. Rajesh Sharma (Cardiologist, New Delhi) |
 | **Patient** | `patient@hospital.com` | `patient123` | Rahul Sharma (Patient, Pincode 110001) |
 

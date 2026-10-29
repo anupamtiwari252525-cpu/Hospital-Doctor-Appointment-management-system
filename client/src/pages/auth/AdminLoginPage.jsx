@@ -488,7 +488,7 @@ export default function AdminLoginPage() {
                   >
                     <AlertCircle size={15} style={{ color: '#ef4444', flexShrink: 0, marginTop: '2px' }} />
                     <div>
-                      <strong>⚠️ Breached Password Detected:</strong> Google Chrome triggers a security warning on common passwords like <code>{password}</code>. Use a high-entropy password like <code>Admin#MasterAuth2026!</code> to avoid browser warnings.
+                      <strong>⚠️ Breached Password Detected:</strong> Google Chrome triggers a security warning on common passwords like <code>{password}</code>. Use a high-entropy password like <code>Anupam@9642</code> to avoid browser warnings.
                     </div>
                   </div>
                 )}

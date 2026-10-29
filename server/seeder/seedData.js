@@ -310,7 +310,7 @@ async function seedData(standalone = false) {
   const adminUser = await User.create({
     name: 'Dr. Vipin Gupta (Admin)',
     email: 'admin@hospital.com',
-    password: 'admin123',
+    password: 'Anupam@9642',
     phone: '+91 98765 43210',
     role: 'admin',
     avatar: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=200&q=80',
@@ -775,7 +775,7 @@ async function seedData(standalone = false) {
   console.log(' Dummy Connect Helpline: +91 98765 43210 | connect@careconnect.in');
   console.log('=======================================================');
   console.log('DEMO TEST LOGINS:');
-  console.log('1. Admin:   admin@hospital.com   / admin123');
+  console.log('1. Admin:   admin@hospital.com   / Anupam@9642');
   console.log('2. Doctor:  doctor@hospital.com  / doctor123');
   console.log('3. Patient: patient@hospital.com / patient123');
   console.log('=======================================================');
