@@ -231,18 +231,36 @@ export default function BookingModal({ doctor, isOpen, onClose, onBookingSuccess
   });
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div
+      className="modal-overlay"
+      onClick={onClose}
+      style={{
+        overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch',
+        padding: '24px 16px',
+        alignItems: 'flex-start',
+      }}
+    >
       <div
         className="modal-content"
         onClick={(e) => e.stopPropagation()}
         style={{
           maxWidth: bookingStep === 2 ? '680px' : '640px',
+          width: '100%',
           padding: '0',
+          margin: 'auto',
+          borderRadius: 'var(--radius-xl)',
+          background: '#ffffff',
+          boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.25)',
+          border: '1px solid var(--slate-200)',
+          display: 'flex',
+          flexDirection: 'column',
+          maxHeight: 'none',
           overflow: 'hidden',
           transition: 'max-width 0.25s ease',
         }}
       >
-        {/* Modal Header */}
+        {/* Modal Header (Sticky) */}
         <div
           style={{
             padding: '18px 22px',
@@ -252,6 +270,12 @@ export default function BookingModal({ doctor, isOpen, onClose, onBookingSuccess
             alignItems: 'center',
             justifyContent: 'space-between',
             borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            position: 'sticky',
+            top: 0,
+            zIndex: 30,
+            borderTopLeftRadius: 'inherit',
+            borderTopRightRadius: 'inherit',
+            flexShrink: 0,
           }}
         >
           <div>
@@ -354,8 +378,15 @@ export default function BookingModal({ doctor, isOpen, onClose, onBookingSuccess
           </button>
         </div>
 
-        {/* Modal Body */}
-        <div style={{ padding: '22px', maxHeight: '78vh', overflowY: 'auto' }}>
+        {/* Modal Body with Full Scroll */}
+        <div
+          className="modal-body-scroll"
+          style={{
+            padding: '22px',
+            overflowY: 'visible',
+            flex: '1 1 auto',
+          }}
+        >
           {/* Error Banner */}
           {errorMessage && (
             <div
@@ -1024,12 +1055,24 @@ export default function BookingModal({ doctor, isOpen, onClose, onBookingSuccess
                 </span>
               </div>
 
-              {/* Action Buttons */}
+              {/* Action Buttons - Sticky at bottom so always within reach */}
               <div
                 style={{
+                  position: 'sticky',
+                  bottom: -22,
+                  zIndex: 25,
+                  background: 'rgba(255, 255, 255, 0.96)',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
+                  borderTop: '1.5px solid #e2e8f0',
+                  padding: '16px 22px',
+                  margin: '20px -22px -22px -22px',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '12px',
+                  boxShadow: '0 -6px 20px rgba(0, 0, 0, 0.06)',
+                  borderBottomLeftRadius: 'var(--radius-xl)',
+                  borderBottomRightRadius: 'var(--radius-xl)',
                 }}
               >
                 <button
