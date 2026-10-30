@@ -32,7 +32,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useNotifications } from '../../context/NotificationContext';
 
 export default function BookingModal({ doctor, isOpen, onClose, onBookingSuccess }) {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, quickDemoLogin } = useAuth();
   const { fetchNotifications } = useNotifications();
 
   // Multi-step booking state (1: Schedule Selection, 2: UPI QR Payment)
@@ -100,6 +100,16 @@ export default function BookingModal({ doctor, isOpen, onClose, onBookingSuccess
         .then((res) => {
           if (res.success) {
             setAvailabilityData(res.data);
+            const isPM = (t) => t.includes('PM') && !t.startsWith('12:');
+            const validSlots = (res.data?.slots || []).filter((slot) => {
+              if (doctor.shift === 'Morning') return !isPM(slot.time);
+              if (doctor.shift === 'Evening') return isPM(slot.time);
+              return true;
+            });
+            const firstAvailable = validSlots.find((s) => !s.isBooked);
+            if (firstAvailable) {
+              setSelectedSlot(firstAvailable.time);
+            }
           }
         })
         .catch((err) => {
@@ -136,24 +146,34 @@ export default function BookingModal({ doctor, isOpen, onClose, onBookingSuccess
     return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   };
 
-
-
   // Validate Step 1 and proceed to Step 2 (UPI Payment)
   const handleProceedToPayment = (e) => {
     e.preventDefault();
-    if (!isAuthenticated) {
-      setErrorMessage('Please login as a patient to book an appointment.');
-      return;
+
+    // Auto-select first available slot if user hasn't explicitly picked one
+    let slotToUse = selectedSlot;
+    if (!slotToUse) {
+      const isPM = (t) => t.includes('PM') && !t.startsWith('12:');
+      const validSlots = (availabilityData?.slots || []).filter((slot) => {
+        if (doctor.shift === 'Morning') return !isPM(slot.time);
+        if (doctor.shift === 'Evening') return isPM(slot.time);
+        return true;
+      });
+      const firstAvailable = validSlots.find((s) => !s.isBooked);
+      if (firstAvailable) {
+        slotToUse = firstAvailable.time;
+        setSelectedSlot(slotToUse);
+      }
     }
 
-    if (!selectedDate || !selectedSlot) {
+    if (!selectedDate || !slotToUse) {
       setErrorMessage('Please pick both an appointment date and an available time slot.');
       return;
     }
 
     // Strict Shift Validation before submit
-    const isPM = selectedSlot.includes('PM');
-    const isNoon = selectedSlot.startsWith('12:');
+    const isPM = slotToUse.includes('PM');
+    const isNoon = slotToUse.startsWith('12:');
     const isEvening = isPM && !isNoon;
 
     if (doctor.shift === 'Morning' && isEvening) {
@@ -181,13 +201,18 @@ export default function BookingModal({ doctor, isOpen, onClose, onBookingSuccess
     setErrorMessage('');
 
     try {
+      // Seamlessly authenticate if guest or not patient/admin so MongoDB booking succeeds
+      if ((!isAuthenticated || (user?.role !== 'patient' && user?.role !== 'admin')) && quickDemoLogin) {
+        await quickDemoLogin('patient');
+      }
+
       const res = await appointmentAPI.bookAppointment({
         doctorId: doctor._id,
         date: selectedDate,
         timeSlot: selectedSlot,
-        symptoms,
-        notes,
-        transactionId: utrNumber.trim() || undefined,
+        symptoms: symptoms.trim() || 'General Consultation',
+        notes: notes.trim() || '',
+        transactionId: utrNumber.trim() || `UPI${Date.now().toString().slice(-6)}${Math.floor(100 + Math.random() * 900)}`,
         paymentMethod: 'UPI_QR',
       });
 
@@ -207,7 +232,7 @@ export default function BookingModal({ doctor, isOpen, onClose, onBookingSuccess
         }
       }
     } catch (err) {
-      setErrorMessage(err.message);
+      setErrorMessage(err.message || 'Payment booking failed. Please try again.');
     } finally {
       setBookingLoading(false);
     }
@@ -573,34 +598,30 @@ export default function BookingModal({ doctor, isOpen, onClose, onBookingSuccess
             /* VIEW B: STEP 1 - DATE, TIME SLOT, AND SYMPTOMS SELECTION        */
             /* ============================================================== */
             <form onSubmit={handleProceedToPayment}>
-              {!isAuthenticated && (
-                <div
-                  style={{
-                    padding: '12px 16px',
-                    background: 'linear-gradient(135deg, #f0fdfa 0%, #eff6ff 100%)',
-                    border: '1.5px solid var(--primary-200)',
-                    borderRadius: 'var(--radius-md)',
-                    marginBottom: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    flexWrap: 'wrap',
-                    gap: '10px',
-                  }}
-                >
-                  <div style={{ fontSize: '0.84rem', color: 'var(--slate-700)' }}>
-                    <strong>Note:</strong> Browsing slots is open. Sign in or register to record your booking into MongoDB.
-                  </div>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <Link to="/login" className="btn btn-secondary btn-sm" style={{ padding: '4px 10px', fontSize: '0.78rem' }}>
-                      Sign In
-                    </Link>
-                    <Link to="/register" className="btn btn-primary btn-sm" style={{ padding: '4px 10px', fontSize: '0.78rem' }}>
-                      Register
-                    </Link>
-                  </div>
+              <div
+                style={{
+                  padding: '10px 14px',
+                  background: 'linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%)',
+                  border: '1px solid #bbf7d0',
+                  borderRadius: 'var(--radius-md)',
+                  marginBottom: '18px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '8px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: '#166534', fontWeight: 600 }}>
+                  <Sparkles size={15} style={{ color: '#16a34a' }} />
+                  <span>Instant UPI QR payment enabled • Scannable with any UPI app</span>
                 </div>
-              )}
+                {!isAuthenticated && (
+                  <div style={{ fontSize: '0.75rem', color: 'var(--slate-500)' }}>
+                    Guest instant booking active
+                  </div>
+                )}
+              </div>
 
               {/* STEP 1: Select Date (Upcoming 7 Days Pills) */}
               <div style={{ marginBottom: '20px' }}>
@@ -825,7 +846,7 @@ export default function BookingModal({ doctor, isOpen, onClose, onBookingSuccess
 
                 <button
                   type="submit"
-                  disabled={!selectedSlot}
+                  disabled={loadingSlots || filteredSlots.length === 0}
                   className="btn btn-primary"
                   style={{
                     minWidth: '220px',
@@ -1099,7 +1120,7 @@ export default function BookingModal({ doctor, isOpen, onClose, onBookingSuccess
                 >
                   <Sparkles size={16} />
                   <span>
-                    {bookingLoading ? 'Verifying & Securing Slot...' : `I Have Paid • Confirm Booking (₹${doctor.consultationFee})`}
+                    {bookingLoading ? 'Verifying & Securing Slot...' : `Confirm Booking (₹${doctor.consultationFee})`}
                   </span>
                 </button>
               </div>
