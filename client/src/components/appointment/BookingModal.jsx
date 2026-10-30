@@ -136,14 +136,7 @@ export default function BookingModal({ doctor, isOpen, onClose, onBookingSuccess
     return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   };
 
-  // Copy UPI ID to clipboard
-  const handleCopyUPI = () => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText('6306722525@ptyes');
-    }
-    setCopiedUpi(true);
-    setTimeout(() => setCopiedUpi(false), 2200);
-  };
+
 
   // Validate Step 1 and proceed to Step 2 (UPI Payment)
   const handleProceedToPayment = (e) => {
@@ -495,9 +488,9 @@ export default function BookingModal({ doctor, isOpen, onClose, onBookingSuccess
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--slate-500)' }}>UPI ID:</span>
-                  <span style={{ fontFamily: 'monospace', fontWeight: 600, color: 'var(--slate-700)' }}>
-                    6306722525@ptyes
+                  <span style={{ color: 'var(--slate-500)' }}>Payment Method:</span>
+                  <span style={{ fontWeight: 600, color: 'var(--slate-700)' }}>
+                    UPI QR Code Payment
                   </span>
                 </div>
 
@@ -985,59 +978,9 @@ export default function BookingModal({ doctor, isOpen, onClose, onBookingSuccess
                   />
                 </div>
 
-                {/* UPI ID & Quick Copy Strip */}
-                <div
-                  style={{
-                    marginTop: '14px',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px',
-                    background: '#f8fafc',
-                    border: '1px solid #e2e8f0',
-                    borderRadius: '30px',
-                    padding: '6px 14px',
-                  }}
-                >
-                  <span style={{ fontSize: '0.76rem', color: 'var(--slate-500)', fontWeight: 600 }}>UPI ID:</span>
-                  <code style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--slate-900)' }}>
-                    6306722525@ptyes
-                  </code>
-                  <button
-                    type="button"
-                    onClick={handleCopyUPI}
-                    style={{
-                      background: copiedUpi ? '#dcfce7' : '#e0f2fe',
-                      color: copiedUpi ? '#15803d' : '#0369a1',
-                      border: 'none',
-                      borderRadius: '20px',
-                      padding: '3px 9px',
-                      fontSize: '0.72rem',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      transition: 'var(--transition)',
-                    }}
-                  >
-                    {copiedUpi ? (
-                      <>
-                        <Check size={12} />
-                        <span>Copied!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy size={12} />
-                        <span>Copy</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-
                 {/* Instructions */}
-                <div style={{ marginTop: '12px', fontSize: '0.78rem', color: 'var(--slate-500)' }}>
-                  Scan using <strong>Paytm</strong>, <strong>PhonePe</strong>, <strong>Google Pay</strong>, or <strong>BHIM</strong>
+                <div style={{ marginTop: '16px', fontSize: '0.82rem', color: 'var(--slate-600)' }}>
+                  Scan with any UPI app: <strong>Paytm</strong>, <strong>PhonePe</strong>, <strong>Google Pay</strong>, or <strong>BHIM</strong>
                 </div>
               </div>
 

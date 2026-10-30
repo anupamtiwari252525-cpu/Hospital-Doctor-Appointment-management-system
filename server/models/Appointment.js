@@ -81,7 +81,7 @@ const appointmentSchema = new mongoose.Schema(
     },
     upiId: {
       type: String,
-      default: '6306722525@ptyes',
+      default: '',
     },
     isReviewed: {
       type: Boolean,

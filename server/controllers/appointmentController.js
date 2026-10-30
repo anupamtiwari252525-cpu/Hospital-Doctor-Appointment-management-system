@@ -88,7 +88,6 @@ exports.bookAppointment = async (req, res, next) => {
       paymentStatus: 'paid',
       paymentMethod: paymentMethod || 'UPI_QR',
       transactionId: transactionId || `UPI${Date.now()}${Math.floor(1000 + Math.random() * 9000)}`,
-      upiId: '6306722525@ptyes',
     });
 
     // Update the slot inside Availability collection
