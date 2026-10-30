@@ -13,7 +13,7 @@
 - **Consultation & Digital Rx**: Symptom tracking, clinical diagnosis, interactive medicine schedules, and print-ready digital prescriptions.
 - **Enterprise JWT Security & RBAC**: Strict Bearer token authorization, role-based access control (Patient, Doctor, Admin), and anti-IDOR protections.
 - **Real Email OTP Password Recovery**: Automated 6-digit verification codes sent directly to user email addresses via Nodemailer (Gmail / SMTP / Resend).
-- **Paytm UPI QR Code Payment**: Integrated authentic UPI QR payment (`6306722525@ptyes` / Anupam So Rakesh Tiwari) with countdown timer, copyable UPI ID, UTR reconciliation, and print-ready receipts.
+- **Paytm UPI QR Code Payment**: Integrated authentic UPI QR payment (`6306722525@ptyes` / Care Connect Hospital Reception) with countdown timer, copyable UPI ID, UTR reconciliation, and print-ready receipts.
 - **Breach-Resistant Password Security**: Client and server-side breach detection against known leaked passwords, preventing browser security pop-ups.
 - **Modular Responsive Architecture**: Seamless experience across **Mobile**, **Tablet**, and **Desktop** screens with a modern glassmorphic medical UI design.
 
@@ -23,7 +23,7 @@
 
 | Feature | Description |
 |---|---|
-| 💳 **UPI QR Code Payment** | Authentic Paytm UPI QR code payment flow (`6306722525@ptyes` - Anupam So Rakesh Tiwari) for consultation fees with 1-click UPI copy, optional 12-digit UTR input, and printable booking receipts. |
+| 💳 **UPI QR Code Payment** | Authentic Paytm UPI QR code payment flow (`6306722525@ptyes` - Care Connect Hospital Reception) for consultation fees with 1-click UPI copy, optional 12-digit UTR input, and printable booking receipts. |
 | 📍 **Pincode Proximity Engine** | Search by 6-digit Indian postal code (e.g. `110001`, `201204`, `201001`, `250001`) with configurable radius (Exact, 10km, 30km, 50km) and distance badges (e.g. `📍 1.2 km away`). |
 | 📅 **Dynamic Slot Engine** | Shifts (Morning/Evening), break periods, custom durations (15m, 30m, 45m, 60m), real-time booking locks, and slot recycling upon cancellation. |
 | 💊 **Digital Prescription Builder** | Clinicians create structured prescriptions: medicine name, dosage, frequency (`1-0-1 After food`), duration, instructions, and printable Rx sheets. |

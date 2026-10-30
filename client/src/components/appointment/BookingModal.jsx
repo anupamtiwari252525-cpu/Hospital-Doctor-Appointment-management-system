@@ -490,7 +490,7 @@ export default function BookingModal({ doctor, isOpen, onClose, onBookingSuccess
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ color: 'var(--slate-500)' }}>Verified Receiver:</span>
                   <strong style={{ color: '#0369a1', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    Anupam So Rakesh Tiwari <BadgeCheck size={14} style={{ color: '#0284c7' }} />
+                    Care Connect Healthcare Reception <BadgeCheck size={14} style={{ color: '#0284c7' }} />
                   </strong>
                 </div>
 
@@ -933,27 +933,25 @@ export default function BookingModal({ doctor, isOpen, onClose, onBookingSuccess
                 >
                   <div
                     style={{
-                      width: '36px',
-                      height: '36px',
+                      width: '38px',
+                      height: '38px',
                       borderRadius: '50%',
-                      background: '#ffedd5',
-                      color: '#c2410c',
-                      fontSize: '0.85rem',
-                      fontWeight: 800,
+                      background: 'linear-gradient(135deg, #0d9488 0%, #0284c7 100%)',
+                      color: '#ffffff',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}
                   >
-                    AT
+                    <Building size={18} />
                   </div>
                   <div style={{ textAlign: 'left' }}>
                     <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--slate-900)', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      <span>Anupam So Rakesh Tiwari</span>
+                      <span>Care Connect Hospital Reception</span>
                       <BadgeCheck size={16} style={{ color: '#0284c7' }} />
                     </div>
                     <div style={{ fontSize: '0.72rem', color: '#16a34a', fontWeight: 700 }}>
-                      Verified Healthcare Merchant
+                      Verified Hospital OPD Desk • Official UPI Payment
                     </div>
                   </div>
                 </div>
