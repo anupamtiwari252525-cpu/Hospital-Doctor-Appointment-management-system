@@ -238,6 +238,324 @@ export default function BookingModal({ doctor, isOpen, onClose, onBookingSuccess
     }
   };
 
+  // Dedicated Print Receipt Handler for Official Booking Slip
+  const handlePrintReceipt = () => {
+    if (!bookingSuccessData) return;
+
+    const patientName =
+      bookingSuccessData.patientId?.name || user?.name || 'Verified Patient';
+    const patientPhone =
+      bookingSuccessData.patientId?.phone || user?.phone || 'On Record';
+    const appointmentNum =
+      bookingSuccessData.appointmentNumber || 'APT-CARE-2026';
+    const hospName = hospital.name || 'Care Connect Hospital';
+    const hospAddr = hospital.address
+      ? `${hospital.address}, ${hospital.city || ''} (Pincode: ${
+          hospital.pincode || doctor.hospitalPincode || ''
+        })`
+      : `Pincode: ${hospital.pincode || doctor.hospitalPincode || ''}`;
+    const docName = doctorDisplayName;
+    const docSpec = doctor.specialization;
+    const docQual = doctor.qualification || 'Consultant Specialist';
+    const apptDate = bookingSuccessData.date;
+    const apptTime = bookingSuccessData.timeSlot;
+    const fee = bookingSuccessData.fee;
+    const txnId = bookingSuccessData.transactionId || 'UPI-VERIFIED-AUTH';
+    const printedAt = new Date().toLocaleString('en-IN', {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    });
+
+    const printHtml = `<!DOCTYPE html>
+<html>
+  <head>
+    <title>Care Connect Hospital - Receipt ${appointmentNum}</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      @page {
+        size: A5 portrait;
+        margin: 12mm;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        color: #0f172a;
+        margin: 0;
+        padding: 16px;
+        background: #ffffff;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+      .receipt-box {
+        max-width: 540px;
+        margin: 0 auto;
+        border: 2px solid #0d9488;
+        border-radius: 12px;
+        padding: 22px;
+        background: #ffffff;
+      }
+      .hdr {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid #0f766e;
+        padding-bottom: 12px;
+        margin-bottom: 14px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .logo-icon {
+        width: 38px;
+        height: 38px;
+        background: #0d9488;
+        color: #fff;
+        font-weight: 800;
+        font-size: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+      }
+      .title {
+        font-size: 17px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0;
+      }
+      .subtitle {
+        font-size: 11px;
+        color: #475569;
+        margin-top: 2px;
+      }
+      .paid-badge {
+        background: #dcfce7;
+        border: 1.5px solid #22c55e;
+        color: #15803d;
+        font-weight: 800;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        letter-spacing: 0.04em;
+        white-space: nowrap;
+      }
+      .bar {
+        background: #f0fdfa;
+        border: 1px solid #99f6e4;
+        border-radius: 8px;
+        padding: 8px 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+      .sec-hdr {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        font-weight: 700;
+        margin: 12px 0 4px 0;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 2px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .label {
+        font-size: 11px;
+        color: #64748b;
+      }
+      .val {
+        font-size: 13px;
+        font-weight: 600;
+        color: #0f172a;
+      }
+      .tbl {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 10px 0 6px 0;
+      }
+      .tbl th, .tbl td {
+        padding: 7px 10px;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .tbl th {
+        background: #f8fafc;
+        font-size: 10px;
+        color: #475569;
+        text-transform: uppercase;
+      }
+      .foot {
+        margin-top: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding-top: 10px;
+        border-top: 1px dashed #cbd5e1;
+      }
+      .note {
+        font-size: 10px;
+        color: #64748b;
+        max-width: 330px;
+        line-height: 1.35;
+      }
+      .stamp {
+        text-align: center;
+        border: 2px dashed #0d9488;
+        border-radius: 8px;
+        padding: 5px 12px;
+        color: #0f766e;
+        font-size: 10px;
+        font-weight: 700;
+      }
+      @media print {
+        .no-print { display: none !important; }
+        body { padding: 0; }
+        .receipt-box { border: 1.5px solid #000; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="receipt-box">
+      <div class="hdr">
+        <div class="brand">
+          <div class="logo-icon">✚</div>
+          <div>
+            <h1 class="title">Care Connect Healthcare</h1>
+            <div class="subtitle">Official OPD Consultation & Payment Slip</div>
+            <div class="subtitle">${hospName}</div>
+          </div>
+        </div>
+        <div class="paid-badge">✓ PAID ONLINE</div>
+      </div>
+
+      <div class="bar">
+        <div>
+          <div style="font-size: 9px; color: #475569; text-transform: uppercase; font-weight: 700;">Appointment Number</div>
+          <div style="font-size: 14px; font-weight: 800; color: #0f766e;">${appointmentNum}</div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 9px; color: #475569;">Generated On</div>
+          <div style="font-weight: 600; font-size: 11px;">${printedAt}</div>
+        </div>
+      </div>
+
+      <div class="sec-hdr">Patient Information</div>
+      <div class="grid">
+        <div>
+          <div class="label">Patient Name:</div>
+          <div class="val">${patientName}</div>
+        </div>
+        <div>
+          <div class="label">Contact / Phone:</div>
+          <div class="val">${patientPhone}</div>
+        </div>
+      </div>
+
+      <div class="sec-hdr">Doctor & Consultation Slot</div>
+      <div class="grid">
+        <div>
+          <div class="label">Consulting Doctor:</div>
+          <div class="val">${docName}</div>
+          <div style="font-size: 10px; color: #0d9488;">${docQual}</div>
+        </div>
+        <div>
+          <div class="label">Specialization:</div>
+          <div class="val">${docSpec}</div>
+        </div>
+        <div>
+          <div class="label">Scheduled Date:</div>
+          <div class="val">${apptDate}</div>
+        </div>
+        <div>
+          <div class="label">Confirmed Time:</div>
+          <div class="val">${apptTime}</div>
+        </div>
+      </div>
+
+      <div class="sec-hdr">Hospital Location</div>
+      <div style="font-size: 11px; color: #1e293b; margin-bottom: 6px;">
+        <strong>${hospName}</strong><br/>
+        ${hospAddr}
+      </div>
+
+      <div class="sec-hdr">Payment Breakdown</div>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Mode</th>
+            <th>Reference / UTR</th>
+            <th style="text-align: right;">Fee</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>OPD Doctor Consultation Fee</td>
+            <td>Paytm UPI QR</td>
+            <td style="font-family: monospace; font-size: 10px;">${txnId}</td>
+            <td style="text-align: right; font-weight: 700;">₹${fee}</td>
+          </tr>
+          <tr style="font-size: 13px; font-weight: 800; color: #0d9488;">
+            <td colspan="3" style="text-align: right;">Total Paid:</td>
+            <td style="text-align: right;">₹${fee}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="foot">
+        <div class="note">
+          • Please report to OPD reception 10 minutes prior to your slot time.<br/>
+          • Show this digital slip or printout at the reception counter.<br/>
+          • Official receipt verified via Care Connect Hospital Portal.
+        </div>
+        <div class="stamp">
+          CARE CONNECT<br/>
+          RECEPTION DESK<br/>
+          ✓ VERIFIED
+        </div>
+      </div>
+
+      <div class="no-print" style="text-align: center; margin-top: 16px;">
+        <button onclick="window.print()" style="padding: 9px 20px; background: #0d9488; color: #fff; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 13px;">
+          🖨️ Print Receipt / Save as PDF
+        </button>
+      </div>
+    </div>
+    <script>
+      window.onload = function() {
+        setTimeout(function() {
+          window.print();
+        }, 250);
+      };
+    </script>
+  </body>
+</html>`;
+
+    try {
+      const printWindow = window.open('', '_blank', 'width=750,height=800');
+      if (printWindow && printWindow.document) {
+        printWindow.document.open();
+        printWindow.document.write(printHtml);
+        printWindow.document.close();
+      } else {
+        window.print();
+      }
+    } catch (_) {
+      window.print();
+    }
+  };
+
   // Strict Shift Slot Filtering:
   const allSlots = availabilityData?.slots || [];
   const filteredSlots = allSlots.filter((slot) => {
@@ -465,6 +783,8 @@ export default function BookingModal({ doctor, isOpen, onClose, onBookingSuccess
 
               {/* Verified Digital Receipt Card */}
               <div
+                id="booking-receipt-print-area"
+                className="printable-receipt"
                 style={{
                   background: '#ffffff',
                   border: '1.5px solid var(--primary-200)',
@@ -573,10 +893,10 @@ export default function BookingModal({ doctor, isOpen, onClose, onBookingSuccess
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
+              <div className="no-print" style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
                 <button
                   type="button"
-                  onClick={() => window.print()}
+                  onClick={handlePrintReceipt}
                   className="btn btn-outline"
                   style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                 >

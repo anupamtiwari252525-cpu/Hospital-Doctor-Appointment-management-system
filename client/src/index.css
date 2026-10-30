@@ -399,23 +399,35 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--slate-400);
 }
 
-/* Print Styling for Digital Prescriptions */
+/* Print Styling for Digital Prescriptions & Booking Receipts */
 @media print {
   body * {
     visibility: hidden;
   }
-  .printable-prescription, .printable-prescription * {
+  .printable-prescription, .printable-prescription *,
+  .printable-receipt, .printable-receipt * {
     visibility: visible;
   }
-  .printable-prescription {
+  .printable-prescription, .printable-receipt {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
     margin: 0;
-    padding: 20px;
+    padding: 24px;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1.5px solid #0d9488 !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
   }
-  .no-print {
+  .modal-overlay {
+    position: static !important;
+    background: none !important;
+    padding: 0 !important;
+    display: block !important;
+  }
+  .no-print, nav, footer, .modal-header, button {
     display: none !important;
   }
 }
