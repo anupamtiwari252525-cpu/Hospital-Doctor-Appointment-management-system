@@ -71,6 +71,18 @@ const appointmentSchema = new mongoose.Schema(
       enum: ['pending', 'paid', 'refunded'],
       default: 'paid',
     },
+    paymentMethod: {
+      type: String,
+      default: 'UPI_QR',
+    },
+    transactionId: {
+      type: String,
+      default: '',
+    },
+    upiId: {
+      type: String,
+      default: '6306722525@ptyes',
+    },
     isReviewed: {
       type: Boolean,
       default: false,

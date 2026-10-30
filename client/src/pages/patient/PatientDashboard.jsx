@@ -305,8 +305,12 @@ export default function PatientDashboard() {
                         </span>
                       </div>
 
-                      <div style={{ fontSize: '0.82rem', color: 'var(--primary-700)', fontWeight: 600, marginTop: '4px' }}>
-                        Slot: {apt.timeSlot}
+                      <div style={{ fontSize: '0.82rem', color: 'var(--primary-700)', fontWeight: 600, marginTop: '4px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                        <span>Slot: {apt.timeSlot}</span>
+                        <span>•</span>
+                        <span style={{ color: '#15803d', background: '#dcfce7', padding: '1px 8px', borderRadius: '10px', fontSize: '0.74rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          ₹{apt.fee} • Paid via UPI
+                        </span>
                       </div>
                     </div>
                   </div>
